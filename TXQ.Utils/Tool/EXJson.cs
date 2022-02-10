@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace TXQ.Utils.Tool
 {
@@ -10,19 +11,17 @@ namespace TXQ.Utils.Tool
         /// <summary>
         /// 把对象转换为JSON字符串
         /// </summary>
-        /// <param name="o">对象</param>
-        /// <returns>JSON字符串</returns>
-        public static string EXToJSON(this object o, bool convert = false)
+        /// <param name="object">对象</param>
+        /// <param name="IncludeFields">使用整齐打印，默认为false</param>
+        /// <returns></returns>
+        public static string EXToJSON(this object Object, bool IncludeFields = false)
         {
-            string json = JsonConvert.SerializeObject(o);
-            if (convert)
+            var options = new JsonSerializerOptions()
             {
-                return EXFormatJson(json);
-            }
-            else
-            {
-                return json;
-            }
+                WriteIndented = IncludeFields,
+                IncludeFields = true
+            };
+            return JsonSerializer.Serialize(Object, options);
         }
         /// <summary>
         /// 把Json文本转为实体
@@ -34,7 +33,12 @@ namespace TXQ.Utils.Tool
         {
             try
             {
-                return JsonConvert.DeserializeObject<T>(input);
+                var options = new JsonSerializerOptions()
+                {
+                    IncludeFields = true,
+                };
+                //return JsonConvert.DeserializeObject<T>(input);
+                return JsonSerializer.Deserialize<T>(input, options);
             }
             catch (Exception EX)
             {
@@ -45,40 +49,7 @@ namespace TXQ.Utils.Tool
                 return default;
             }
         }
-        public static string EXFormatJson(string str)
-        {
-            //格式化json字符串
-            JsonSerializer serializer = new JsonSerializer();
-            TextReader tr = new StringReader(str);
-            JsonTextReader jtr = new JsonTextReader(tr);
-            object obj = serializer.Deserialize(jtr);
-            if (obj != null)
-            {
-                StringWriter textWriter = new StringWriter();
-                JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
-                {
-                    Formatting = Formatting.Indented,
-                    Indentation = 4,
-                    IndentChar = ' '
-                };
-                serializer.Serialize(jsonWriter, obj);
-                return textWriter.ToString();
-            }
-            else
-            {
-                return str;
-            }
-        }
-        /// <summary>
-        /// 字典转json字符串
-        /// </summary>
-        /// <param name="myDic"></param>
-        /// <returns></returns>
-        public static string EXDictionaryToJson(this Dictionary<string, string> myDic)
-        {
-            string jsonStr = JsonConvert.SerializeObject(myDic);
-            return jsonStr;
-        }
+
         /// <summary>
         /// json转字典
         /// </summary>
@@ -86,8 +57,11 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static Dictionary<string, object> EXJsonToDictionary(this string jsonStr)
         {
-            Dictionary<string, object> dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonStr);
-            return dic;
+            var options = new JsonSerializerOptions()
+            {
+                IncludeFields = true,
+            };
+            return JsonSerializer.Deserialize<Dictionary<string, object>>(jsonStr, options);
         }
     }
 }
