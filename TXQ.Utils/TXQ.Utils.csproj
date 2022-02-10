@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472</TargetFrameworks>
-    <Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</Version>
+    <Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
     <FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
     <AssemblyVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</AssemblyVersion>
     <Copyright>Copyright © $([System.DateTime]::Now.ToString("yyyy")) By Tan Xinqi</Copyright>
