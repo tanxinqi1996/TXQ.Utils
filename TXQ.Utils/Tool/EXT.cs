@@ -41,6 +41,7 @@ namespace TXQ.Utils.Tool
                         var options = new JsonSerializerOptions()
                         {
                             IncludeFields = true,
+                            PropertyNameCaseInsensitive = true
                         };
                         value[i] = JsonSerializer.Serialize(item.GetType().GetProperty(dtColumn.ColumnName).GetValue(item),options);
                     }

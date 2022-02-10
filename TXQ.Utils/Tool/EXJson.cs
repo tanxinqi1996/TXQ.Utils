@@ -12,56 +12,32 @@ namespace TXQ.Utils.Tool
         /// 把对象转换为JSON字符串
         /// </summary>
         /// <param name="object">对象</param>
-        /// <param name="IncludeFields">使用整齐打印，默认为false</param>
+        /// <param name="WriteIndented">使用整齐打印，默认为false</param>
         /// <returns></returns>
-        public static string EXToJSON(this object Object, bool IncludeFields = false)
+        public static string EXToJSON(this object Object, bool WriteIndented = false)
         {
-            var options = new JsonSerializerOptions()
+
+            return JsonSerializer.Serialize(Object, new JsonSerializerOptions()
             {
-                WriteIndented = IncludeFields,
-                IncludeFields = true
-            };
-            return JsonSerializer.Serialize(Object, options);
+                WriteIndented = WriteIndented,
+                IncludeFields = true,
+            });
         }
         /// <summary>
         /// 把Json文本转为实体
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="input"></param>
-        /// <returns></returns>
-        public static T EXJsonToType<T>(this string input, bool SHOWERR = false)
+        /// <param name="PropertyNameCaseInsensitive">忽略大小写，默认为true</param>
+        /// <returns>T</returns>
+        public static T EXJsonToType<T>(this string input, bool PropertyNameCaseInsensitive = true)
         {
-            try
-            {
-                var options = new JsonSerializerOptions()
-                {
-                    IncludeFields = true,
-                };
-                //return JsonConvert.DeserializeObject<T>(input);
-                return JsonSerializer.Deserialize<T>(input, options);
-            }
-            catch (Exception EX)
-            {
-                if (SHOWERR)
-                {
-                    throw EX;
-                }
-                return default;
-            }
-        }
-
-        /// <summary>
-        /// json转字典
-        /// </summary>
-        /// <param name="jsonStr"></param>
-        /// <returns></returns>
-        public static Dictionary<string, object> EXJsonToDictionary(this string jsonStr)
-        {
-            var options = new JsonSerializerOptions()
+            return JsonSerializer.Deserialize<T>(input, new JsonSerializerOptions()
             {
                 IncludeFields = true,
-            };
-            return JsonSerializer.Deserialize<Dictionary<string, object>>(jsonStr, options);
+                PropertyNameCaseInsensitive = PropertyNameCaseInsensitive
+            });
+
         }
     }
 }
