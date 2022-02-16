@@ -55,5 +55,42 @@ namespace TXQ.Utils.Tool
             ms.Write(imageBytes, 0, imageBytes.Length);
             return Image.FromStream(ms, true);
         }
+
+        /// <summary>
+        /// 获取文件的Base64字符串
+        /// </summary>
+        /// <param name="filename">文件路径</param>
+        /// <returns>Base64字符串</returns>
+        public static string EXGetBase64(string filename)
+        {
+            var filestream = new FileStream(filename, FileMode.Open);
+            byte[] bt = new byte[filestream.Length];
+            filestream.Read(bt, 0, bt.Length);
+            var base64Str = Convert.ToBase64String(bt);
+            return base64Str;
+        }
+
+        /// <summary>
+        /// Base64字符串转文件
+        /// </summary>
+        /// <param name="Base64str"><Base64str/param>
+        /// <param name="filename">文件路径</param>
+        public static void EXBase64ToFile(this string Base64str,string filename)
+        {
+            byte[] b = Convert.FromBase64String(Base64str);
+            File.WriteAllBytes(filename, b);
+        }
+
+        /// <summary>
+        /// 获取文件的Base64字符串
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns>字符串</returns>
+        public static string EXGetBase64(this FileInfo fileInfo)
+        {
+            return EXGetBase64(fileInfo.FullName);
+        }
+
+
     }
 }
