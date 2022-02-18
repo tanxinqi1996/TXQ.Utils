@@ -13,7 +13,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="num">长度</param>
         /// <returns>随机数</returns>
-        private static int CreateNum(int num)
+        public static int CreateNum(int num)
         {
             Random random = new Random(Guid.NewGuid().GetHashCode());
             StringBuilder str = new StringBuilder();
@@ -37,7 +37,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="num">长度</param>
         /// <returns><随机大写字母/returns>
-        private static string CreateBigAbc(int num)
+        public static string CreateBigAbc(int num)
         {
             StringBuilder str = new StringBuilder();
             Random random = new Random(Guid.NewGuid().GetHashCode());
@@ -54,7 +54,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="num">长度</param>
         /// <returns>随机小写字母</returns>
-        private static string CreateSmallAbc(int num)
+        public static string CreateSmallAbc(int num)
         {
             //a-z的 ASCII值为97-122
             StringBuilder str = new StringBuilder();
@@ -67,6 +67,14 @@ namespace TXQ.Utils.Tool
             return str.ToString();
         }
 
+
+        public static string CreateString(int Lenth, bool Use0_9, bool Usea_c, bool UseA_Z)
+        {
+            StringBuilder str = new StringBuilder();
+            Random random = new Random(Guid.NewGuid().GetHashCode());
+
+            return str.ToString();
+        }
 
     }
 }

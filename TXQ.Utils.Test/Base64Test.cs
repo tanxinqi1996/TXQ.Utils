@@ -9,7 +9,7 @@ namespace TXQ.Utils.Test
         public void Base64Test1()
         {
             var file = System.IO.Path.GetTempFileName();
-            System.IO.File.WriteAllText(file,)
+        //    System.IO.File.WriteAllText(file,)
 
         }
     }
