@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text.Json;
 
 namespace TXQ.Utils.Tool
 {
@@ -38,12 +38,7 @@ namespace TXQ.Utils.Tool
                     }
                     else
                     {
-                        var options = new JsonSerializerOptions()
-                        {
-                            IncludeFields = true,
-                            PropertyNameCaseInsensitive = true
-                        };
-                        value[i] = JsonSerializer.Serialize(item.GetType().GetProperty(dtColumn.ColumnName).GetValue(item),options);
+                        value[i] = JsonConvert.SerializeObject(item.GetType().GetProperty(dtColumn.ColumnName).GetValue(item));
                     }
                 }
                 dt.Rows.Add(value);

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace TXQ.Utils.Tool
 {
@@ -11,17 +11,20 @@ namespace TXQ.Utils.Tool
         /// <summary>
         /// 把对象转换为JSON字符串
         /// </summary>
-        /// <param name="object">对象</param>
-        /// <param name="WriteIndented">使用整齐打印，默认为false</param>
-        /// <returns></returns>
-        public static string EXToJSON(this object Object, bool WriteIndented = false)
+        /// <param name="o">对象</param>
+        /// <returns>JSON字符串</returns>
+        public static string EXToJSON(this object o, bool convert = false)
         {
 
-            return JsonSerializer.Serialize(Object, new JsonSerializerOptions()
+            string json = JsonConvert.SerializeObject(o);
+            if (convert)
             {
-                WriteIndented = WriteIndented,
-                IncludeFields = true,
-            });
+                return EXFormatJson(json);
+            }
+            else
+            {
+                return json;
+            }
         }
         /// <summary>
         /// 把Json文本转为实体
@@ -32,12 +35,33 @@ namespace TXQ.Utils.Tool
         /// <returns>T</returns>
         public static T EXJsonToType<T>(this string input, bool PropertyNameCaseInsensitive = true)
         {
-            return JsonSerializer.Deserialize<T>(input, new JsonSerializerOptions()
-            {
-                IncludeFields = true,
-                PropertyNameCaseInsensitive = PropertyNameCaseInsensitive
-            });
+            return JsonConvert.DeserializeObject<T>(input);
 
+        }
+
+        public static string EXFormatJson(string str)
+        {
+            //格式化json字符串
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            object obj = serializer.Deserialize(jtr);
+            if (obj != null)
+            {
+                StringWriter textWriter = new StringWriter();
+                JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonWriter, obj);
+                return textWriter.ToString();
+            }
+            else
+            {
+                return str;
+            }
         }
     }
 }
