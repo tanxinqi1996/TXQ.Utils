@@ -52,7 +52,7 @@ namespace TXQ.Utils.Tool
                 string log = $"{DateTime.Now.ToString(LogTimeType)}{Title}{Content}{Environment.NewLine}";
                 try
                 {
-                    System.Diagnostics.Debug.WriteLine(log.Trim());
+                    Trace.WriteLine(log.Trim());
                     //写入文本框
                     WriteTextBox(log.Trim(), Level);
                     //写入控制台
