@@ -164,16 +164,13 @@ namespace TXQ.Utils.Tool
         [DllImport("user32.dll")]
         private static extern IntPtr LoadKeyboardLayout(string pwszKLID, uint Flags);
 
-        private static uint WM_INPUTLANGCHANGEREQUEST = 0x0050;
-        private static int HWND_BROADCAST = 0xffff;
-        private static string en_US = "00000409"; //英文
-        private static string cn_ZH = "00000804";
-        private static uint KLF_ACTIVATE = 1;
 
         //调用此方法时，将屏蔽中文输入法(操作系统级别，即使使用快捷键ctrl+shift也还原不回中文输入法)
+        //  00000409 英文
+        //  00000804 中文
         public static void SetInputLanguange(string en_US = "00000409")
         {
-            PostMessage(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, IntPtr.Zero, LoadKeyboardLayout(en_US, KLF_ACTIVATE));
+            PostMessage(0xffff, 0x0050, IntPtr.Zero, LoadKeyboardLayout(en_US, 1));
         }
         #endregion 修正输入法问题
         [DllImport("newdev.dll")]

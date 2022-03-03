@@ -17,9 +17,9 @@ namespace TXQ.Utils.Test
         public void TestPost()
         {
 
-            // var text = TXQ.Utils.Tool.HTTP.Post("http://mes.ipason.com/blazerproduction/test/log", "{\"hardwareHealthStatus\":\"\",\"hardwareInformation\":\" \",\"secretKey\":\"\",\"sn\":\"2012236240356\",\"softwareInformation\":\"\",\"testTime\":\"2022-02-09 15:33:06\",\"mo\":\"2012236240356\"}", new System.Collections.Generic.Dictionary<string, string>() { { "Authorization", "Bearer 00ec1394-3182-4f93-a482-9600d523a0f4" } });
-
-            // Console.WriteLine(text.Result);
+            var (stdout, exitcode) = TXQ.Utils.Tool.ExProcess.Run("ping.exe", "qq.com");
+            Console.WriteLine(stdout);
+            Console.WriteLine($"code:{exitcode}");
         }
     }
 }
