@@ -5,18 +5,18 @@ using System.Windows.Forms;
 
 namespace TXQ.Utils.Tool
 {
-    public static class EXSystemIO
+    public static class ExDirectoryInfo
     {
         /// <summary>
         /// 使用递归的方式获取目录下的所有文件,包含子目录
         /// </summary>
         /// <param name="directoryInfo">目录</param>
         /// <returns>所有文件</returns>
-        public static List<FileInfo> EXGetAllFiles(this DirectoryInfo directoryInfo)
+        public static List<FileInfo> EXGetAllFiles(this System.IO.DirectoryInfo directoryInfo)
         {
-            List<DirectoryInfo> dirs = EXGetAllDirectories(directoryInfo);
+            List<System.IO.DirectoryInfo> dirs = EXGetAllDirectories(directoryInfo);
             List<FileInfo> files = directoryInfo.GetFiles().ToList();
-            foreach (DirectoryInfo item in dirs)
+            foreach (System.IO.DirectoryInfo item in dirs)
             {
                 files.AddRange(item.GetFiles());
             }
@@ -27,10 +27,10 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="directoryInfo">目录信息</param>
         /// <returns>子目录列表</returns>
-        public static List<DirectoryInfo> EXGetAllDirectories(this DirectoryInfo directoryInfo)
+        public static List<System.IO.DirectoryInfo> EXGetAllDirectories(this System.IO.DirectoryInfo directoryInfo)
         {
-            List<DirectoryInfo> list = new List<DirectoryInfo>();
-            foreach (DirectoryInfo dir in directoryInfo.GetDirectories())
+            List<System.IO.DirectoryInfo> list = new List<System.IO.DirectoryInfo>();
+            foreach (System.IO.DirectoryInfo dir in directoryInfo.GetDirectories())
             {
                 list.Add(dir);
                 list.AddRange(dir.EXGetAllDirectories());

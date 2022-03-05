@@ -24,7 +24,7 @@ namespace TXQ.Utils.Tool
         /// <param name="DT"></param>
         public static void EXToXlsx(this DataTable DT)
         {
-            string FILE = EXSystemIO.SaveFileDialog("EXCEL|xlsx");
+            string FILE = ExDirectoryInfo.SaveFileDialog("EXCEL|xlsx");
             if (FILE == null)
             {
                 return;
