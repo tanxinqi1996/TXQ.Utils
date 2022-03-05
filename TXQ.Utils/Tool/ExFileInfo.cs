@@ -10,13 +10,13 @@ namespace TXQ.Utils.Tool
     public static class ExFileInfo
     {
         /// <summary>
-        /// 使用递归的方式获取目录下的所有文件,包含子目录
+        /// 获取文件的Byte
         /// </summary>
-        /// <param name="directoryInfo">目录</param>
-        /// <returns>所有文件</returns>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
         public static byte[] EXGetByte(this FileInfo fileInfo)
         {
-            using (FileStream fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+            using (FileStream fs = new FileStream(fileInfo.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 byte[] buffur = new byte[fs.Length];
                 using (BinaryWriter bw = new BinaryWriter(fs))
