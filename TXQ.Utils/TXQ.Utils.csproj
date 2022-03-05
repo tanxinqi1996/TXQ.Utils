@@ -10,7 +10,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
-    <ReactorProject>"D:\Source\OneDrive\NetReactorConfig.nrproj"</ReactorProject>
+    <ReactorProject>"Z:\开发工具\加密配置.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="C:\Users\tanxinqi\.nuget\packages\microsoft.dism\2.4.0\contentFiles\any\net40\PublicAPI.Shipped.txt" />
@@ -45,4 +45,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="Z:\开发工具\加密配置.nrproj" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="ReactorCall" AfterTargets="Compile">
+    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
+  </Target>
 </Project>
