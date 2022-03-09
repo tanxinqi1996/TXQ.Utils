@@ -13,9 +13,9 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string DecodeQrCode(Bitmap barcodeBitmap)
         {
-            BarcodeReader reader = new BarcodeReader();
-            reader.Options.CharacterSet = "UTF-8";
-            Result result = reader.Decode(barcodeBitmap);
+            var reader = new BarcodeReader();
+            //    reader.Options.CharacterSet = "UTF-8";
+            Result result = reader<Bitmap>.Decode(barcodeBitmap);
             return result?.Text;
         }
 
@@ -26,8 +26,8 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string DecodeQrCode(Image img)
         {
-            BarcodeReader reader = new BarcodeReader();
-            reader.Options.CharacterSet = "UTF-8";
+            var reader = new BarcodeReader();
+            //      reader.Options.CharacterSet = "UTF-8";
             Result result = reader.Decode(new Bitmap(img));
             return result?.Text;
         }
