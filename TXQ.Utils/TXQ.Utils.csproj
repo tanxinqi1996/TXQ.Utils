@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net6.0-windows</TargetFrameworks>
+	<TargetFrameworks>net472</TargetFrameworks>
 	<LangVersion>9.0</LangVersion>
 	<UseWindowsForms>true</UseWindowsForms>
     <Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>

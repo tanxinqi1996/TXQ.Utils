@@ -15,7 +15,7 @@ namespace TXQ.Utils.Tool
         {
             var reader = new BarcodeReader();
             //    reader.Options.CharacterSet = "UTF-8";
-            Result result = reader<Bitmap>.Decode(barcodeBitmap);
+            Result result = reader.Decode(barcodeBitmap);
             return result?.Text;
         }
 
