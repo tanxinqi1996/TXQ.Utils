@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -27,13 +28,8 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha1(this byte[] input)
         {
-            byte[] result = SHA1.Create().ComputeHash(input);
-            StringBuilder sBuilder = new StringBuilder();
-            foreach (var ITEM in result)
-            {
-                sBuilder.Append(ITEM.ToString("x2"));
-            }
-            return sBuilder.ToString().ToUpper();
+            using SHA1 SHA1 = SHA1Managed.Create();
+            return Convert.ToBase64String(SHA1.ComputeHash(input));
         }
 
         /// <summary>
@@ -43,8 +39,9 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha256(this string input)
         {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            return inputBytes.EXGetSha256();
+            byte[] SHA256Data = Encoding.UTF8.GetBytes(input);
+            return SHA256Data.EXGetSha256();
+
         }
 
         /// <summary>
@@ -54,13 +51,15 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha256(this byte[] input)
         {
-            byte[] result = SHA256.Create().ComputeHash(input);
-            StringBuilder sBuilder = new StringBuilder();
-            foreach (var ITEM in result)
-            {
-                sBuilder.Append(ITEM.ToString("x2"));
-            }
-            return sBuilder.ToString().ToUpper();
+            using SHA256 SHA256 = SHA256Managed.Create();
+            return Convert.ToBase64String(SHA256.ComputeHash(input));
+        }
+
+        public static string ExGetSha256(this FileInfo file)
+        {
+            using SHA256 SHA256 = SHA256Managed.Create();
+            using FileStream fileStream = File.OpenRead(file.FullName);
+            return Convert.ToBase64String(SHA256.ComputeHash(fileStream));
         }
 
 
