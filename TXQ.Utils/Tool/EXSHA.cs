@@ -17,7 +17,17 @@ namespace TXQ.Utils.Tool
         public static string EXGetSha1(this string input)
         {
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] result = new SHA1CryptoServiceProvider().ComputeHash(inputBytes);
+            return inputBytes.EXGetSha1();
+        }
+
+        /// <summary>
+        /// 获取Sha1
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string EXGetSha1(this byte[] input)
+        {
+            byte[] result = SHA1.Create().ComputeHash(input);
             StringBuilder sBuilder = new StringBuilder();
             foreach (var ITEM in result)
             {
@@ -34,7 +44,17 @@ namespace TXQ.Utils.Tool
         public static string EXGetSha256(this string input)
         {
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] result = new SHA256CryptoServiceProvider().ComputeHash(inputBytes);
+            return inputBytes.EXGetSha256();
+        }
+
+        /// <summary>
+        /// 获取Sha1
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string EXGetSha256(this byte[] input)
+        {
+            byte[] result = SHA256.Create().ComputeHash(input);
             StringBuilder sBuilder = new StringBuilder();
             foreach (var ITEM in result)
             {
@@ -42,6 +62,7 @@ namespace TXQ.Utils.Tool
             }
             return sBuilder.ToString().ToUpper();
         }
+
 
     }
 }
