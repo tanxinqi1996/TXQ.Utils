@@ -65,10 +65,10 @@ namespace TXQ.Utils.Tool
                             TConsole.WriteLine(log.Trim(), ConsoleColor.Yellow);
                             break;
                         case LogLevel.INFO:
-                            TConsole.WriteLine(log.Trim(), ConsoleColor.Black);
+                            TConsole.WriteLine(log.Trim(), ConsoleColor.White);
                             break;
                         case LogLevel.DEBUG:
-                            TConsole.WriteLine(log.Trim(), ConsoleColor.DarkGray);
+                            TConsole.WriteLine(log.Trim(), ConsoleColor.Gray);
                             break;
                     }
                     //写入文件
