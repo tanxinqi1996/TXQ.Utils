@@ -121,7 +121,19 @@ namespace TXQ.Utils.Model
                 item.UUID = Convert.ToString(queryObj["UUID"]).Trim();
                 item.Description = Convert.ToString(queryObj["Description"]).Trim();
             }
-            if (item.Version.StartsWith("6.1"))
+            if (item.Version.StartsWith("5.0"))
+            {
+                item.SysVer = "Win2000";
+            }
+            else if (item.Version.StartsWith("5.1"))
+            {
+                item.SysVer = "WinXP";
+            }
+            else if (item.Version.StartsWith("6.0"))
+            {
+                item.SysVer = "WinVisita";
+            }
+            else if (item.Version.StartsWith("6.1"))
             {
                 item.SysVer = "Win7";
             }
@@ -129,9 +141,18 @@ namespace TXQ.Utils.Model
             {
                 item.SysVer = "Win8";
             }
-            else if (item.Version.StartsWith("10.0"))
+            else if (item.Version.StartsWith("10.0.1"))
             {
                 item.SysVer = "Win10";
+            }
+            else if (item.Version.StartsWith("10.0.2"))
+            {
+                item.SysVer = "Win11";
+            }
+            else
+            {
+                item.SysVer = item.Version;
+                throw new Exception("Un Definition System Version");
             }
             if (Environment.Is64BitOperatingSystem == true)
             {
