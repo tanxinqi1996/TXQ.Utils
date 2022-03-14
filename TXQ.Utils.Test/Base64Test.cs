@@ -12,7 +12,9 @@ namespace TXQ.Utils.Test
             var file = System.IO.Path.GetTempFileName();
             //    System.IO.File.WriteAllText(file,)
 
-            System.Console.WriteLine(new System.IO.FileInfo(@"E:\Source\Downloads\NetDrive3_Setup-3.15.450.exe.torrent").EXGetBase64());
+            System.Console.WriteLine(new System.IO.FileInfo(@"D:\1.btw").ExGetSha256());
+            System.Console.WriteLine("AAAAAA".EXGetSha256());
+
         }
     }
 }
