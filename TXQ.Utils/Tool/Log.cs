@@ -28,12 +28,12 @@ namespace TXQ.Utils.Tool
 
         public static void INFO(string msg)
         {
-            Write($" -INFO -", msg, LogLevel.INFO);
+            Write($" -INFO- ", msg, LogLevel.INFO);
         }
 
         public static void WARNING(string msg)
         {
-            Write($" -WARN - ", msg, LogLevel.WARRING);
+            Write($" -WARN-  ", msg, LogLevel.WARRING);
         }
 
         public static void ERROR(string msg)
@@ -65,10 +65,10 @@ namespace TXQ.Utils.Tool
                             TConsole.WriteLine(log.Trim(), ConsoleColor.Yellow);
                             break;
                         case LogLevel.INFO:
-                            TConsole.WriteLine(log.Trim(), ConsoleColor.Green);
+                            TConsole.WriteLine(log.Trim(), ConsoleColor.Black);
                             break;
                         case LogLevel.DEBUG:
-                            TConsole.WriteLine(log.Trim(), ConsoleColor.Cyan);
+                            TConsole.WriteLine(log.Trim(), ConsoleColor.DarkGray);
                             break;
                     }
                     //写入文件
@@ -98,16 +98,16 @@ namespace TXQ.Utils.Tool
                 switch (Level)
                 {
                     case LogLevel.ERROR:
-                        color = Color.Red;
+                        color = Color.Tomato;
                         break;
                     case LogLevel.WARRING:
                         color = Color.DarkOrange;
                         break;
                     case LogLevel.INFO:
-                        color = Color.Green;
+                        color = Color.Black;
                         break;
                     case LogLevel.DEBUG:
-                        color = Color.Purple;
+                        color = Color.DarkGray;
                         break;
                 }
                 LogRichTextBox.AppendColorText(Content, color);
