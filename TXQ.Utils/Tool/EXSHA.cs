@@ -28,9 +28,22 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha1(this byte[] input)
         {
-            var hash = SHA1Managed.Create().ComputeHash(input);
+            var hash = SHA1.Create().ComputeHash(input);
             var builder = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
+            {
+                builder.Append(hash[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+
+
+        public static string ExGetSha1(this FileInfo file)
+        {
+            using var fileStream = File.OpenRead(file.FullName);
+            var hash = SHA1.Create().ComputeHash(fileStream);
+            var builder = new StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
             }
@@ -54,7 +67,7 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha256(this byte[] input)
         {
-            var hash = SHA256Managed.Create().ComputeHash(input);
+            var hash = SHA256.Create().ComputeHash(input);
             var builder = new StringBuilder();
             for (var i = 0; i < hash.Length; i++)
             {
@@ -65,9 +78,14 @@ namespace TXQ.Utils.Tool
 
         public static string ExGetSha256(this FileInfo file)
         {
-            using var SHA256 = SHA256Managed.Create();
             using var fileStream = File.OpenRead(file.FullName);
-            return SHA256.ComputeHash(fileStream).EXGetSha256();
+            var hash = SHA256.Create().ComputeHash(fileStream);
+            var builder = new StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
+            {
+                builder.Append(hash[i].ToString("x2"));
+            }
+            return builder.ToString();
         }
 
 
