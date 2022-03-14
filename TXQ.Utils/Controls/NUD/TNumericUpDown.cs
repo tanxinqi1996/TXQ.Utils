@@ -14,7 +14,7 @@ namespace TXQ.Utils.Controls.ConfigControl
             {
                 if (this.FindForm() != null)
                 {
-                    this.Value = Global.INI.Read(this.FindForm().GetType().FullName, this.Name, this.Value);
+                    this.Value = ExIni.Read(this.FindForm().GetType().FullName, this.Name, this.Value);
                 }
                 this.ValueChanged += new System.EventHandler(this.Change);
             }
@@ -26,7 +26,7 @@ namespace TXQ.Utils.Controls.ConfigControl
             {
                 if (this.FindForm() != null)
                 {
-                    Global.INI.Write(this.FindForm().GetType().FullName, this.Name, this.Text);
+                    ExIni.Write(this.FindForm().GetType().FullName, this.Name, this.Text);
                 }
             }
         }

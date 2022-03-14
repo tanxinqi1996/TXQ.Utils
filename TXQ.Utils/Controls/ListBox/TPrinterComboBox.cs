@@ -32,7 +32,7 @@ namespace TXQ.Utils.Controls
             this.Items.Add("加载打印机列表");
             if (this.FindForm() != null)
             {
-                string printer = Global.INI.Read(this.FindForm().GetType().FullName, this.Name, DefaultPrinter);
+                string printer = ExIni.Read(this.FindForm().GetType().FullName, this.Name, DefaultPrinter);
                 this.Text = printer;
             }
         }
@@ -54,11 +54,10 @@ namespace TXQ.Utils.Controls
 
             if (this.FindForm() != null)
             {
-                Global.INI.Write(this.FindForm().GetType().FullName, this.Name, this.Text);
+                ExIni.Write(this.FindForm().GetType().FullName, this.Name, this.Text);
             }
 
         }
-
 
     }
 }

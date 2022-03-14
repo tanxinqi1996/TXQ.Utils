@@ -12,7 +12,7 @@ namespace TXQ.Utils.Controls
             {
                 if (this.FindForm() != null)
                 {
-                    this.Checked = Global.INI.Read(this.FindForm().GetType().FullName, this.Name, true);
+                    this.Checked = ExIni.Read(this.FindForm().GetType().FullName, this.Name, true);
                 }
                 this.CheckedChanged += new System.EventHandler(this.Change);
             }
@@ -24,7 +24,7 @@ namespace TXQ.Utils.Controls
             {
                 if (this.FindForm() != null)
                 {
-                    Global.INI.Write(this.FindForm().GetType().FullName, this.Name, this.Checked);
+                    ExIni.Write(this.FindForm().GetType().FullName, this.Name, this.Checked);
                 }
             }
         }

@@ -21,17 +21,16 @@ namespace TXQ.Utils.WinAPI
         {
             DismApi.Initialize(DismLogLevel.LogErrors);
             List<Driver> DATA = new List<Driver>();
-            var ini = new Tool.INI(InfPath);
-            string DriverVer = ini.Read("Version", "DriverVer", "01/01/2000,1.1.1.1");
+            string DriverVer = ExIni.Read("Version", "DriverVer", "01/01/2000,1.1.1.1", false, InfPath);
 
 
             DateTime date = Convert.ToDateTime(DriverVer.Split(',')[0]);
             //,号分割时间和版本号，在按照;分割版本号后面的注释
             string version = DriverVer.Split(',')[1].Split(';')[0].Trim();
             string infname = InfPath.Split('\\').Last();
-            string dir = new FileInfo(InfPath).DirectoryName.Replace(Application.StartupPath+"\\",null);
+            string dir = new FileInfo(InfPath).DirectoryName.Replace(Application.StartupPath + "\\", null);
             //;分割注释
-            string Class = ini.Read("Version", "Class", "").Split(';')[0].Trim();
+            string Class = ExIni.Read("Version", "Class", "", false, InfPath).Split(';')[0].Trim();
             var DRVINFO = DismApi.GetDriverInfo(DismApi.OpenOfflineSession(DismApi.DISM_ONLINE_IMAGE), InfPath);
             foreach (var ITEM in DRVINFO)
             {
