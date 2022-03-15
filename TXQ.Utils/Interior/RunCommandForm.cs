@@ -48,8 +48,8 @@ namespace TXQ.Utils.Interior
 
         public void RunCmd(string CMD)
         {
-            DataReceivedEventHandler OUTPUT = new DataReceivedEventHandler(Output);
-            DataReceivedEventHandler ERRPUT = new DataReceivedEventHandler(Error);
+            var OUTPUT = new DataReceivedEventHandler(Output);
+            var ERRPUT = new DataReceivedEventHandler(Error);
 
             Task.Run(new Action(() =>
             {

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +14,15 @@ namespace TXQ.Utils.Tool
         /// <summary>
         /// 编码类型;默认为GB2312;请勿修改此选项
         /// </summary>
-        public static Encoding DefaultEncoding = Encoding.GetEncoding("GB2312");
+        public static Encoding GB2312
+        {
+            get
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                return Encoding.GetEncoding("GB2312");
+            }
+        }
+
 
         /// <summary>
         /// 把CMD命令写入BAT文件并执行
@@ -23,28 +32,23 @@ namespace TXQ.Utils.Tool
         /// <param name="WaitForExit">是否等待运行完成</param>
         public static void Run(string Cmd, bool ShowCmd = true, bool WaitForExit = true)
         {
-            string temp = Path.GetTempFileName();
-            File.Delete(temp);
-            string tempfile = temp + ".bat";
-            if (DefaultEncoding == Encoding.GetEncoding("GB2312"))
+            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
+            using var sw = new StreamWriter(tempfile, false, GB2312);
+            sw.Write(Cmd);
+            sw.Close();
+
+            using Process p = new Process();
+            p.StartInfo.FileName = tempfile;
+            if (!ShowCmd)
             {
-                Cmd = $"CHCP 936\r\n{Cmd}";
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             }
-            File.WriteAllText(tempfile, Cmd, DefaultEncoding);
-            using (Process p = new Process())
+            p.Start();
+            if (WaitForExit)
             {
-                p.StartInfo.FileName = tempfile;
-                if (!ShowCmd)
-                {
-                    p.StartInfo.CreateNoWindow = true;
-                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                }
-                p.Start();
-                if (WaitForExit)
-                {
-                    p.WaitForExit();
-                    File.Delete(tempfile);
-                }
+                p.WaitForExit();
+                File.Delete(tempfile);
             }
         }
 
@@ -55,23 +59,18 @@ namespace TXQ.Utils.Tool
         /// <returns>返回值;0=成功</returns>
         public static int Run(string Cmd)
         {
-            string temp = Path.GetTempFileName();
-            File.Delete(temp);
-            string tempfile = temp + ".bat";
-            if (DefaultEncoding == Encoding.GetEncoding("GB2312"))
-            {
-                Cmd = $"CHCP 936\r\n{Cmd}";
-            }
-            File.WriteAllText(tempfile, Cmd, DefaultEncoding);
-            using (Process p = new Process())
-            {
-                p.StartInfo.FileName = tempfile;
-                p.StartInfo.UseShellExecute = false;
-                p.Start();
-                p.WaitForExit();
-                File.Delete(tempfile);
-                return p.ExitCode;
-            }
+            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
+            using var sw = new StreamWriter(tempfile, false, GB2312);
+            sw.Write(Cmd);
+            sw.Close();
+
+            using var p = new Process();
+            p.StartInfo.FileName = tempfile;
+            p.StartInfo.UseShellExecute = false;
+            p.Start();
+            p.WaitForExit();
+            File.Delete(tempfile);
+            return p.ExitCode;
         }
 
         /// <summary>
@@ -83,15 +82,13 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static int Run(string Cmd, DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
         {
+            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
+            using var sw = new StreamWriter(tempfile, false, GB2312);
+            sw.Write(Cmd);
+            sw.Close();
+
             Process cmdProcess = new Process();
-            string temp = Path.GetTempFileName();
-            File.Delete(temp);
-            string tempfile = temp + ".bat";
-            if (DefaultEncoding == Encoding.GetEncoding("GB2312"))
-            {
-                Cmd = $"CHCP 936\r\n{Cmd}";
-            }
-            File.WriteAllText(tempfile, Cmd, DefaultEncoding);
+
             cmdProcess.StartInfo.FileName = tempfile;
             //若要使用异步输出则必须不使用操作系统外壳
             cmdProcess.StartInfo.UseShellExecute = false;
@@ -102,9 +99,9 @@ namespace TXQ.Utils.Tool
             //若要使用异步输出则必须不创建新窗口
             cmdProcess.StartInfo.CreateNoWindow = true;
             //指定异步输出使用的编码方式
-            cmdProcess.StartInfo.StandardOutputEncoding = DefaultEncoding;
+            cmdProcess.StartInfo.StandardOutputEncoding = GB2312;
             //指定异步错误使用的编码方式
-            cmdProcess.StartInfo.StandardErrorEncoding = DefaultEncoding;
+            cmdProcess.StartInfo.StandardErrorEncoding = GB2312;
             //将输出处理函数重定向到输出处理委托
             cmdProcess.OutputDataReceived += outputHandler;
             //将错误处理函数重定向到错误处理委托
@@ -130,7 +127,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="CMD">CMD命令</param>
         /// <param name="SHOWERR">最后一个命令ErrorLevel!=0&&SHOWERR==True时，不自动关闭命令窗口</param>
-        public static void RunCmdInForm(string CMD, bool SHOWERR=false)
+        public static void RunCmdInForm(string CMD, bool SHOWERR = false)
         {
             new TXQ.Utils.Interior.RunCommandForm(CMD, SHOWERR).ShowDialog();
         }
@@ -138,15 +135,17 @@ namespace TXQ.Utils.Tool
         /// <summary>
         /// 运行CMD命令并获取输出
         /// </summary>
-        /// <param name="CMD">CMD命令</param>
+        /// <param name="Cmd">CMD命令</param>
         /// <returns>输出</returns>
-        public static string RunCMDGetStdout(string CMD)
+        public static string RunCMDGetStdout(string Cmd)
         {
-            string temp = Path.GetTempFileName();
-            File.Delete(temp);
-            string tempfile = temp + ".bat";
-            File.WriteAllText(tempfile, CMD);
-            Process proc = new Process();
+            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
+            using var sw = new StreamWriter(tempfile, false, GB2312);
+            sw.Write(Cmd);
+            sw.Close();
+
+
+            using var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.FileName = tempfile;
             proc.StartInfo.UseShellExecute = false;
@@ -159,6 +158,20 @@ namespace TXQ.Utils.Tool
             return outStr;
 
         }
+
+
+        /// <summary>
+        /// 调用C System函数，在控制台中执行cli命令。
+        /// </summary>
+        /// <param name="command"></param>
+        public static void SystemCmd(string command)
+        {
+            system(command);
+        }
+
+        [DllImport("msvcrt.dll", SetLastError = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private extern static void system(string command); // longjmp
+
     }
 }
 
