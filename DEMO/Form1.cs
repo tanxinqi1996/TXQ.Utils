@@ -31,9 +31,7 @@ namespace DEMO
 
         private void button2_Click(object sender, EventArgs e)
         {
-            TXQ.Utils.Tool.PC.PCINFO.Init();
-            var D = TXQ.Utils.Tool.PC.PCINFO.Disk;
-            tPagerControl1.DrawControl(D.Count,D);
+            TXQ.Utils.P2P.Client.Init();
 
         }
     }

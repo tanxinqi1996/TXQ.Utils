@@ -231,7 +231,7 @@ namespace TXQ.Utils.P2P
                     if (watcher.ElapsedMilliseconds < 200 && lenth > speedlimit / 5)
                     {
                         lenth = 0;
-                        Thread.Sleep((int)(200 - watcher.ElapsedMilliseconds));
+                      await Task.Delay((int)(200 - watcher.ElapsedMilliseconds));
                         watcher.Restart();
                     }
                     lenth += size;
