@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using TXQ.Utils.Tool;
@@ -7,12 +8,35 @@ namespace TXQ.Utils.Controls
 {
     public partial class TPagerControl : UserControl
     {
+        #region 窗口设计器自动生成的代码
+
         public TPagerControl()
         {
             InitializeComponent();
             DrawControl(true);
             toolStripSplitButton1.Text = string.Format("每页{0}条", PageSize);
         }
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripStatusLabel UP;
+        private System.Windows.Forms.ToolStripStatusLabel DOWN;
+        private System.Windows.Forms.ToolStripStatusLabel EXPORT;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel FIRST;
+        private System.Windows.Forms.ToolStripStatusLabel LAST;
+        private System.Windows.Forms.ToolStripMenuItem 全部ToolStripMenuItem;
+        private ToolStripSplitButton ListHeader;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem 全选ToolStripMenuItem;
 
         /// <summary> 
         /// 必需的设计器变量。
@@ -40,6 +64,9 @@ namespace TXQ.Utils.Controls
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ListHeader = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.全选ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,6 +75,7 @@ namespace TXQ.Utils.Controls
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.全部ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FIRST = new System.Windows.Forms.ToolStripStatusLabel();
             this.UP = new System.Windows.Forms.ToolStripStatusLabel();
             this.DOWN = new System.Windows.Forms.ToolStripStatusLabel();
@@ -55,7 +83,6 @@ namespace TXQ.Utils.Controls
             this.EXPORT = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.全部ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -64,6 +91,7 @@ namespace TXQ.Utils.Controls
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
+            this.ListHeader,
             this.toolStripStatusLabel2,
             this.toolStripSplitButton1,
             this.FIRST,
@@ -82,13 +110,37 @@ namespace TXQ.Utils.Controls
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(131, 18);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(36, 18);
+            this.toolStripStatusLabel1.Text = "Lab1";
+            // 
+            // ListHeader
+            // 
+            this.ListHeader.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.ListHeader.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator1,
+            this.全选ToolStripMenuItem});
+            this.ListHeader.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ListHeader.Name = "ListHeader";
+            this.ListHeader.Size = new System.Drawing.Size(74, 21);
+            this.ListHeader.Text = "每页50条";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // 全选ToolStripMenuItem
+            // 
+            this.全选ToolStripMenuItem.Checked = true;
+            this.全选ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.全选ToolStripMenuItem.Name = "全选ToolStripMenuItem";
+            this.全选ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.全选ToolStripMenuItem.Text = "全选";
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(130, 18);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(182, 18);
             this.toolStripStatusLabel2.Spring = true;
             // 
             // toolStripSplitButton1
@@ -110,28 +162,28 @@ namespace TXQ.Utils.Controls
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem1.Text = "每页50条";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem2.Text = "每页100条";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.ToolStripMenuItem2_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem3.Text = "每页200条";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.ToolStripMenuItem3_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem4.Text = "每页500条";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.ToolStripMenuItem4_Click);
             // 
@@ -139,16 +191,23 @@ namespace TXQ.Utils.Controls
             // 
             this.toolStripMenuItem6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem6.Text = "每页1000条";
             this.toolStripMenuItem6.Click += new System.EventHandler(this.ToolStripMenuItem6_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem7.Text = "每页10000条";
             this.toolStripMenuItem7.Click += new System.EventHandler(this.ToolStripMenuItem7_Click);
+            // 
+            // 全部ToolStripMenuItem
+            // 
+            this.全部ToolStripMenuItem.Name = "全部ToolStripMenuItem";
+            this.全部ToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.全部ToolStripMenuItem.Text = "全部";
+            this.全部ToolStripMenuItem.Click += new System.EventHandler(this.全部ToolStripMenuItem_Click);
             // 
             // FIRST
             // 
@@ -222,22 +281,17 @@ namespace TXQ.Utils.Controls
             this.dataGridView1.Size = new System.Drawing.Size(599, 180);
             this.dataGridView1.TabIndex = 63;
             this.dataGridView1.VirtualMode = true;
+            this.dataGridView1.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView1_ColumnAdded);
+            this.dataGridView1.ColumnRemoved += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView1_ColumnRemoved);
             // 
-            // 全部ToolStripMenuItem
-            // 
-            this.全部ToolStripMenuItem.Name = "全部ToolStripMenuItem";
-            this.全部ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.全部ToolStripMenuItem.Text = "全部";
-            this.全部ToolStripMenuItem.Click += new System.EventHandler(this.全部ToolStripMenuItem_Click);
-            // 
-            // PagerControl
+            // TPagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.statusStrip1);
-            this.Name = "PagerControl";
+            this.Name = "TPagerControl";
             this.Size = new System.Drawing.Size(599, 203);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -247,25 +301,9 @@ namespace TXQ.Utils.Controls
 
         }
         #endregion
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
-        private System.Windows.Forms.ToolStripStatusLabel UP;
-        private System.Windows.Forms.ToolStripStatusLabel DOWN;
-        private System.Windows.Forms.ToolStripStatusLabel EXPORT;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel FIRST;
-        private System.Windows.Forms.ToolStripStatusLabel LAST;
-        private System.Windows.Forms.ToolStripMenuItem 全部ToolStripMenuItem;
 
+
+        #endregion
 
 
 
@@ -485,6 +523,70 @@ namespace TXQ.Utils.Controls
             PageSize = 0;
             pageIndex = 1;
             DrawControl(true);
+
+        }
+
+        private void dataGridView1_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            if (_DGV_Cells == null)
+            {
+                _DGV_Cells = new Dictionary<string, bool>();
+            }
+            foreach (DataGridViewColumn ITEM in DataGridView.Columns)
+            {
+                if (_DGV_Cells.ContainsKey(ITEM.HeaderText))
+                {
+                    _DGV_Cells[ITEM.HeaderText] = ITEM.Displayed;
+                }
+                else
+                {
+                    _DGV_Cells.Add(ITEM.HeaderText, ITEM.Displayed);
+                }
+            }
+            LOG.DEBUG(_DGV_Cells.EXToJSON());
+            ListHeader.DropDownItems.Clear();
+            foreach (var ITEM in _DGV_Cells)
+            {
+                ListHeader.DropDownItems.Add(new ToolStripButton()
+                {
+                    Text=ITEM.Key,
+                    Checked = ITEM.Value,
+                });
+
+            }
+
+        }
+        private Dictionary<string, bool> _DGV_Cells;
+
+        private void dataGridView1_ColumnRemoved(object sender, DataGridViewColumnEventArgs e)
+        {
+            if (_DGV_Cells == null)
+            {
+                _DGV_Cells = new Dictionary<string, bool>();
+            }
+            foreach (DataGridViewColumn ITEM in DataGridView.Columns)
+            {
+                if (_DGV_Cells.ContainsKey(ITEM.HeaderText))
+                {
+                    _DGV_Cells[ITEM.HeaderText] = ITEM.Displayed;
+                }
+                else
+                {
+                    _DGV_Cells.Add(ITEM.HeaderText, ITEM.Displayed);
+                }
+            }
+            LOG.DEBUG(_DGV_Cells.EXToJSON());
+            ListHeader.DropDownItems.Clear();
+            foreach (var ITEM in _DGV_Cells)
+            {
+                ListHeader.DropDownItems.Add(new ToolStripMenuItem()
+                {
+                    Text = ITEM.Key,
+                    Checked=ITEM.Value,
+                });
+
+            }
+
 
         }
     }
