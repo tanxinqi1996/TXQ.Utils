@@ -21,7 +21,20 @@ namespace DEMO
         {
             TXQ.Utils.Tool.PC.PCINFO.Init();
             var D = TXQ.Utils.Tool.PC.PCINFO.Disk;
-            tPagerControl1.DataGridView.DataSource = D;
+            tPagerControl1.DrawControl(D.Count, D);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tPagerControl1.DataGridView.Columns[0].HeaderText = "aa";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            TXQ.Utils.Tool.PC.PCINFO.Init();
+            var D = TXQ.Utils.Tool.PC.PCINFO.Disk;
+            tPagerControl1.DrawControl(D.Count,D);
+
         }
     }
 }
