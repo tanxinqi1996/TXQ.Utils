@@ -43,7 +43,6 @@ namespace TXQ.Utils.Tool
 
 
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private static void Write(string Title, string Content, LogLevel Level)
         {
             //如果日志等级过低不记录日志
@@ -81,6 +80,7 @@ namespace TXQ.Utils.Tool
             }
 
         }
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private static void WriteFile(string log)
         {
             if (Directory.Exists(LogFilePath) == false)
@@ -111,10 +111,16 @@ namespace TXQ.Utils.Tool
                         break;
                 }
                 LogRichTextBox.AppendColorText(Content, color);
-                if (LogRichTextBox.Lines.Length > 1000)
+
+                LogRichTextBox.Invoke(new EventHandler(delegate
                 {
-                    LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
-                }
+                    if (LogRichTextBox.Lines.Length > 1000)
+                    {
+                        LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
+                    }
+                }));
+
+
             }
 
         }

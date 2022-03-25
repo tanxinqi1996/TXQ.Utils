@@ -311,7 +311,7 @@ namespace TXQ.Utils.P2P
                     foreach (var ITEM in Peers.EXJsonToType<List<string>>())
                     {
                         peerurl = ITEM + sha;
-                        LOG.INFO($"{sha}: form {peerurl}");
+                        LOG.INFO($"{sha}: form {ITEM}");
 
                         if (Directory.Exists(Workdir) == false)
                         {
@@ -397,13 +397,12 @@ namespace TXQ.Utils.P2P
                           }
                           await Task.Delay(1000 * 30);
                       }
-                      catch (Exception ex)
+                      catch
                       {
-                          LOG.ERROR(ex.Message);
                       }
                   }
               });
-            
+
         }
     }
 }
