@@ -19,8 +19,7 @@ namespace DEMO
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            TXQ.Utils.Tool.PC.PCINFO.Init();
-            var D = TXQ.Utils.Tool.PC.PCINFO.Disk;
+            var D = TXQ.Utils.WinAPI.PCINFO.Disk;
             tPagerControl1.DrawControl(D.Count, D);
         }
 

@@ -15,17 +15,13 @@ namespace TXQ.Utils.P2P
     {
         private static HttpListener _httplistener = null; //文件下载处理请求监听
         //数据目录
-        private static string _workdir;
+        public static string Workdir;
         //向Tracker汇报的Peer地址
-        private static string _peer => $@"http://{_host}:{_port}/";
+        public static string _peer => $@"http://{_host}:{_port}/";
         private static int _port = 55555;
         private static string _host;
         //Tracker服务器
-        private static string _tracker = "http://192.168.31.239:44444/";
-        //Peer连接超时
-        private static int _peerConnTimeout = 100 * 5;
-        //Traccer连接超时
-        private static int _TraccerConnTimeout = 100 * 5;
+        public static string _tracker = "http://192.168.31.239:44444/";
 
         //文件下载超时 30s
         private static int _downloadTimeout = 1000 * 30;
@@ -36,7 +32,7 @@ namespace TXQ.Utils.P2P
 
         private static long _ID = 1;
         private static int _Conntions = 0;
-        private static void GethttpFiledownload()
+        private static void HTTPListener()
         {
             while (true)
             {
@@ -49,7 +45,7 @@ namespace TXQ.Utils.P2P
                 {
                     try
                     {
-                        var path = _workdir + request.Request.RawUrl;
+                        var path = Workdir + request.Request.RawUrl;
                         if (File.Exists(path) == false)
                         {
                             request.SendText("File Not Found", 404);
@@ -100,7 +96,7 @@ namespace TXQ.Utils.P2P
         }
         private static void SendFile(this HttpListenerContext httpListener)
         {
-            var path = _workdir + httpListener.Request.RawUrl;
+            var path = Workdir + httpListener.Request.RawUrl;
             var file = new FileInfo(path);
             FileStream fs = new(file.FullName, FileMode.Open, FileAccess.Read);
             var buffer = new byte[fs.Length];
@@ -143,7 +139,7 @@ namespace TXQ.Utils.P2P
                 //分割后的文件SHA1
                 var sha = cutBytes.EXGetSha1();
                 //分割文件名
-                string cutFileName = Path.Combine(_workdir, sha);
+                string cutFileName = Path.Combine(Workdir, sha);
                 //写入分割文件
                 using FileStream tempStream = new(cutFileName, FileMode.OpenOrCreate);
                 using BinaryWriter tempWriter = new(tempStream);
@@ -179,7 +175,7 @@ namespace TXQ.Utils.P2P
             foreach (var item in file.SubFiles.OrderBy(o => o.Key))
             {
                 LOG.INFO($"{file.SHA}:正在合并文件 {item.Key + 1}/{file.SubFiles.Count}");
-                using var fileStream = new FileStream($@"{_workdir}{item.Value}", FileMode.Open);
+                using var fileStream = new FileStream($@"{Workdir}{item.Value}", FileMode.Open);
                 using var fileReader = new BinaryReader(fileStream);
                 byte[] TempBytes = fileReader.ReadBytes((int)fileStream.Length);
                 if (item.Value == TempBytes.EXGetSha1())
@@ -203,12 +199,6 @@ namespace TXQ.Utils.P2P
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="path"></param>
-        /// <param name="speedlimit"></param>
         private static async Task<bool> HttpDownload(string url, string path, string sha1, int speedlimit = 1024 * 1000 * 100)
         {
             try
@@ -231,7 +221,7 @@ namespace TXQ.Utils.P2P
                     if (watcher.ElapsedMilliseconds < 200 && lenth > speedlimit / 5)
                     {
                         lenth = 0;
-                      await Task.Delay((int)(200 - watcher.ElapsedMilliseconds));
+                        await Task.Delay((int)(200 - watcher.ElapsedMilliseconds));
                         watcher.Restart();
                     }
                     lenth += size;
@@ -263,7 +253,7 @@ namespace TXQ.Utils.P2P
             var tasks = new List<Task>();
             foreach (var ITEM in DHT.SubFiles)
             {
-                string filename = _workdir + ITEM.Value;
+                string filename = Workdir + ITEM.Value;
                 if (File.Exists(filename))
                 {
                     LOG.INFO($"{ ITEM.Value}: 文件已存在");
@@ -294,13 +284,11 @@ namespace TXQ.Utils.P2P
 
         }
 
-
-
         public static async void Add(string sha)
         {
             LOG.INFO($"{sha}: 开始下载");
 
-            string filename = _workdir + sha;
+            string filename = Workdir + sha;
             if (File.Exists(filename))
             {
                 LOG.INFO($"{sha}: 文件已存在");
@@ -309,7 +297,7 @@ namespace TXQ.Utils.P2P
             }
             while (!File.Exists(filename))
             {
-                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=100";
+                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=1";
                 string peerurl = null;
                 try
                 {
@@ -320,12 +308,17 @@ namespace TXQ.Utils.P2P
                         throw new Exception($"Tracker Report Error;Request:{trackerurl};Reslt:{Peers}");
                     }
                     var p = Peers.EXJsonToType<List<string>>();
-                    p = p.RandomSort();
                     foreach (var ITEM in Peers.EXJsonToType<List<string>>())
                     {
                         peerurl = ITEM + sha;
                         LOG.INFO($"{sha}: form {peerurl}");
-                        var downloadok = HttpDownload(peerurl, _workdir + sha, sha, _speedlimit);
+
+                        if (Directory.Exists(Workdir) == false)
+                        {
+                            Directory.CreateDirectory(Workdir);
+                            LOG.INFO($"DataDir:{Workdir}");
+                        }
+                        var downloadok = HttpDownload(peerurl, Workdir + sha, sha, _speedlimit);
                         if (downloadok.Wait(_downloadTimeout))
                         {
                             if (downloadok.Result == true)
@@ -351,29 +344,17 @@ namespace TXQ.Utils.P2P
 
         }
 
-
-
-        private static List<T> RandomSort<T>(this List<T> list)
-        {
-            var random = new Random();
-            var newList = new List<T>();
-            foreach (var item in list)
-            {
-                newList.Insert(random.Next(newList.Count), item);
-            }
-            return newList;
-        }
         public static void Init(bool startpeer = true, string workdir = null)
         {
             //初始化数据目录
-            _workdir = workdir ?? Environment.CurrentDirectory + "\\Data\\";
-            LOG.INFO($"DataDir:{_workdir}");
+            Workdir = workdir ?? Environment.CurrentDirectory + "\\Data\\";
+            LOG.INFO($"DataDir:{Workdir}");
 
             //创建数据目录
-            if (Directory.Exists(_workdir) == false)
+            if (Directory.Exists(Workdir) == false)
             {
-                Directory.CreateDirectory(_workdir);
-                LOG.INFO($"DataDir:{_workdir}");
+                Directory.CreateDirectory(Workdir);
+                LOG.INFO($"DataDir:{Workdir}");
             }
 
             if (startpeer == false) return;
@@ -395,36 +376,34 @@ namespace TXQ.Utils.P2P
             LOG.INFO($"ListenOn:http://*:{_port}/");
             LOG.INFO($"Peer:{_peer}");
             _httplistener.Start();
-            Task.Run(GethttpFiledownload);
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        var list = new DirectoryInfo(_workdir).GetFiles().Select(O => O.Name).EXToJSON();
-                        var url = $"{_tracker}api/peer?peer={_peer}";
-                        var res = HTTP.Post(url, list).Result;
+            Task.Run(HTTPListener);
+            var t = Task.Run(async () =>
+              {
+                  while (true)
+                  {
+                      try
+                      {
+                          var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name).EXToJSON();
+                          var url = $"{_tracker}api/peer?peer={_peer}";
+                          var res = HTTP.Post(url, list).Result;
 
-                        if (res == "true")
-                        {
-                            LOG.INFO("Tell Tracker Succecc");
-                        }
-                        else
-                        {
-                            throw new Exception("Unknown Error!");
-                        }
-                        await Task.Delay(1000 * 30);
-                    }
-                    catch (Exception ex)
-                    {
-                        LOG.ERROR(ex.Message);
-                    }
-                }
-            });
-
-
-
+                          if (res == "true")
+                          {
+                              LOG.INFO("Tell Tracker Succecc");
+                          }
+                          else
+                          {
+                              throw new Exception("Unknown Error!");
+                          }
+                          await Task.Delay(1000 * 30);
+                      }
+                      catch (Exception ex)
+                      {
+                          LOG.ERROR(ex.Message);
+                      }
+                  }
+              });
+            
         }
     }
 }

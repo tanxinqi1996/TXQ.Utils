@@ -9,9 +9,8 @@ namespace TXQ.Utils.Test
         [TestMethod]
         public void Json()
         {
-            TXQ.Utils.Tool.PC.PCINFO.Init();
-            Assert.AreEqual(TXQ.Utils.Tool.PC.PCINFO.EXToJSON(), TXQ.Utils.Tool.PC.PCINFO.EXToJSON().EXJsonToType<Model.PCINFO>().EXToJSON());
-            System.Console.WriteLine(TXQ.Utils.Tool.PC.PCINFO.EXToJSON());
+        //    Assert.AreEqual(WinAPI.PCINFO.EXToJSON(), TXQ.Utils.Tool.PC.PCINFO.EXToJSON().EXJsonToType<Model.PCINFO>().EXToJSON());
+         //   System.Console.WriteLine(TXQ.Utils.Tool.PC.PCINFO.EXToJSON());
 
         }
     }

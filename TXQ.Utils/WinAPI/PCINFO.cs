@@ -8,21 +8,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TXQ.Utils.Tool;
 
-namespace TXQ.Utils.Model
+namespace TXQ.Utils.WinAPI
 {
-    public class PCINFO
+    public static class PCINFO
     {
-        public PCINFO()
+        public static List<string> DVD;
+        public static List<MonitorInfo> Monitor;
+        public static BaseboardInfo Baseboard;
+        public static SystemInfo System;
+        public static List<NetWorkInfo> NetWork;
+        public static List<DiskInfo> Disk;
+        public static List<MemoryInfo> Memory;
+        public static CpuInfo CPU;
+        public static List<GPUInfo> GPU;
+        public static BiosInfo Bios;
+        static PCINFO()
         {
-            Init();
-        }
-
-        /// <summary>
-        /// 重新读取信息
-        /// </summary>
-        public void Init()
-        {
-            InitCPUInfo();
             InitDiskInfo();
             InitDVDInfo();
             InitMonitorInfo();
@@ -31,21 +32,8 @@ namespace TXQ.Utils.Model
             InitNetWorkInfo();
             InitMemoryInfo();
             InitGPUInfo();
-            InitBiosInfo();
         }
-        public List<string> DVD;
-        public List<MonitorInfo> Monitor;
-        public BaseboardInfo Baseboard;
-        public SystemInfo System;
-        public List<NetWorkInfo> NetWork;
-        public List<DiskInfo> Disk;
-        public List<MemoryInfo> Memory;
-        public CpuInfo CPU;
-        public List<GPUInfo> GPU;
-        public BiosInfo Bios;
-
-
-        private void InitDVDInfo()
+        private static void InitDVDInfo()
         {
             List<string> DVD = new List<string>();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_CDROMDrive"))
@@ -53,9 +41,9 @@ namespace TXQ.Utils.Model
                 string Name = Convert.ToString(queryObj["Caption"]).Trim();
                 DVD.Add(Name);
             }
-            this.DVD = DVD;
+            PCINFO.DVD = DVD;
         }
-        private void InitMonitorInfo()
+        private static void InitMonitorInfo()
         {
             List<MonitorInfo> Class = new List<MonitorInfo>();
             foreach (Screen item in Screen.AllScreens)
@@ -71,7 +59,7 @@ namespace TXQ.Utils.Model
             }
             Monitor = Class;
         }
-        private void InitBaseboardInfo()
+        private static void InitBaseboardInfo()
         {
             BaseboardInfo item = new BaseboardInfo();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("WIN32_baseboard"))
@@ -82,7 +70,7 @@ namespace TXQ.Utils.Model
             }
             Baseboard = item;
         }
-        private void InitSystemInfo()
+        private static void InitSystemInfo()
         {
             SystemInfo item = new SystemInfo();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_OperatingSystem"))
@@ -157,7 +145,8 @@ namespace TXQ.Utils.Model
             }
             System = item;
         }
-        private void InitNetWorkInfo()
+
+        private static void InitNetWorkInfo()
         {
             List<NetWorkInfo> Class = new List<NetWorkInfo>();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_NetworkAdapter"))
@@ -176,7 +165,7 @@ namespace TXQ.Utils.Model
             }
             NetWork = Class;
         }
-        private void InitDiskInfo()
+        private static void InitDiskInfo()
         {
             List<DiskInfo> Class = new List<DiskInfo>();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_DiskDrive"))
@@ -196,7 +185,7 @@ namespace TXQ.Utils.Model
             }
             Disk = Class;
         }
-        private void InitMemoryInfo()
+        private static void InitMemoryInfo()
         {
             List<MemoryInfo> Class = new List<MemoryInfo>();
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_PhysicalMemory"))
@@ -214,7 +203,7 @@ namespace TXQ.Utils.Model
             }
             Memory = Class;
         }
-        private void InitCPUInfo()
+        private static void InitCPUInfo()
         {
             foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_Processor"))
             {
@@ -229,7 +218,7 @@ namespace TXQ.Utils.Model
             }
 
         }
-        public void InitGPUInfo()
+        public static void InitGPUInfo()
         {
             List<GPUInfo> Class = new List<GPUInfo>();
 
@@ -245,25 +234,7 @@ namespace TXQ.Utils.Model
             }
             GPU = Class;
         }
-        private void InitBiosInfo()
-        {
-            BiosInfo item = new BiosInfo();
-            foreach (ManagementObject queryObj in TXQ.Utils.Tool.PC.GetWMIObjList("Win32_BIOS"))
-            {
-                //部分主板BIOS日期为NULL 转换为时间会报错
-                item.ReleaseDate = Convert.ToString(queryObj["ReleaseDate"]);
-                item.Version = Convert.ToString(queryObj["Version"]);
-                item.SerialNumber = Convert.ToString(queryObj["SerialNumber"]);
-                item.SMBIOSBIOSVersion = Convert.ToString(queryObj["SMBIOSBIOSVersion"]);
-                item.Caption = Convert.ToString(queryObj["Caption"]);
-                item.Manufacturer = Convert.ToString(queryObj["Manufacturer"]);
-            }
-            if (item.ReleaseDate.Length > 8)
-            {
-                item.ReleaseDate = item.ReleaseDate.Substring(0, 8);
-            }
-            Bios = item;
-        }
+
 
         #region Win32 API
         [DllImport("user32.dll")]

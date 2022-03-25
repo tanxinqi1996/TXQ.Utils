@@ -6,10 +6,16 @@ namespace TXQ.Utils.Tool
 {
     public static class ExIni
     {
+
+
+        static ExIni()
+        {
+            ConfigFile = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".ini";
+        }
         /// <summary>
         /// 默认配置文件路径
         /// </summary>
-        public static string ConfigFile => System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".ini";
+        public static string ConfigFile ;
 
         /// <summary>
         /// 读取INI文件值

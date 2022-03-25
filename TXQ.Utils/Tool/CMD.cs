@@ -11,17 +11,16 @@ namespace TXQ.Utils.Tool
 {
     public static class CMD
     {
+
+        static CMD()
+        {
+            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            DefaultEncoding = Encoding.GetEncoding("GB2312");
+        }
         /// <summary>
         /// 编码类型;默认为GB2312;请勿修改此选项
         /// </summary>
-        public static Encoding GB2312
-        {
-            get
-            {
-                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                return Encoding.GetEncoding("GB2312");
-            }
-        }
+        private static Encoding DefaultEncoding;
 
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace TXQ.Utils.Tool
         public static void Run(string Cmd, bool ShowCmd = true, bool WaitForExit = true)
         {
             string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using var sw = new StreamWriter(tempfile, false, GB2312);
+            using var sw = new StreamWriter(tempfile, false, DefaultEncoding);
             sw.Write(Cmd);
             sw.Close();
 
@@ -60,7 +59,7 @@ namespace TXQ.Utils.Tool
         public static int Run(string Cmd)
         {
             string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using var sw = new StreamWriter(tempfile, false, GB2312);
+            using var sw = new StreamWriter(tempfile, false, DefaultEncoding);
             sw.Write(Cmd);
             sw.Close();
 
@@ -83,7 +82,7 @@ namespace TXQ.Utils.Tool
         public static int Run(string Cmd, DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
         {
             string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using var sw = new StreamWriter(tempfile, false, GB2312);
+            using var sw = new StreamWriter(tempfile, false, DefaultEncoding);
             sw.Write(Cmd);
             sw.Close();
 
@@ -99,9 +98,9 @@ namespace TXQ.Utils.Tool
             //若要使用异步输出则必须不创建新窗口
             cmdProcess.StartInfo.CreateNoWindow = true;
             //指定异步输出使用的编码方式
-            cmdProcess.StartInfo.StandardOutputEncoding = GB2312;
+            cmdProcess.StartInfo.StandardOutputEncoding = DefaultEncoding;
             //指定异步错误使用的编码方式
-            cmdProcess.StartInfo.StandardErrorEncoding = GB2312;
+            cmdProcess.StartInfo.StandardErrorEncoding = DefaultEncoding;
             //将输出处理函数重定向到输出处理委托
             cmdProcess.OutputDataReceived += outputHandler;
             //将错误处理函数重定向到错误处理委托
@@ -140,7 +139,7 @@ namespace TXQ.Utils.Tool
         public static string RunCMDGetStdout(string Cmd)
         {
             string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using var sw = new StreamWriter(tempfile, false, GB2312);
+            using var sw = new StreamWriter(tempfile, false, DefaultEncoding);
             sw.Write(Cmd);
             sw.Close();
 
