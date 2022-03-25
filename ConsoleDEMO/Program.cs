@@ -21,9 +21,9 @@ namespace ConsoleDEMO
 
 
 
-            string file = @"zh-cn_windows_server_2022_x64_dvd_6c73507d.iso.dht";
-            var DHT = File.ReadAllText(file).EXJsonToType<TXQ.Utils.P2P.DHT>();
-            var d = TXQ.Utils.P2P.Client.DownLoadFile(DHT, "").Result;
+            //string file = @"zh-cn_windows_server_2022_x64_dvd_6c73507d.iso.dht";
+            //var DHT = File.ReadAllText(file).EXJsonToType<TXQ.Utils.P2P.DHT>();
+            //var d = TXQ.Utils.P2P.Client.DownLoadFile(DHT, "").Result;
         }
     }
 }

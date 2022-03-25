@@ -16,7 +16,7 @@ namespace TXQ.Utils.P2P
         private static HttpListener _httplistener = null; //文件下载处理请求监听
         //数据目录
         public static string Workdir;
-        //向Tracker汇报的Peer地址
+        public static string TempDir = Path.GetTempPath();//向Tracker汇报的Peer地址
         public static string _peer => $@"http://{_host}:{_port}/";
         private static int _port = 55555;
         private static string _host;
@@ -153,57 +153,63 @@ namespace TXQ.Utils.P2P
         }
 
 
-        private static bool CombineFiles(DHT file, string combineFile)
+        private static async Task<bool> CombineFiles(DHT file, string combineFile)
         {
-            if (File.Exists(combineFile))
-            {
-                LOG.INFO("文件已存在，正在读取校验SHA1，时间可能较长，请稍后");
-                var SHA = new FileInfo(combineFile).ExGetSha1();
-                if (SHA == file.SHA)
-                {
-                    LOG.INFO($"{SHA}：校验成功");
-                    return true;
-                }
-                else
-                {
-                    LOG.INFO($"{SHA}：校验失败，尝试覆盖当前文件");
-                }
-            }
-            LOG.INFO($"{file.SHA}:正在合并文件");
-            using var CombineStream = new FileStream(combineFile, FileMode.OpenOrCreate);
-            using var CombineWriter = new BinaryWriter(CombineStream);
-            foreach (var item in file.SubFiles.OrderBy(o => o.Key))
-            {
-                LOG.INFO($"{file.SHA}:正在合并文件 {item.Key + 1}/{file.SubFiles.Count}");
-                using var fileStream = new FileStream($@"{Workdir}{item.Value}", FileMode.Open);
-                using var fileReader = new BinaryReader(fileStream);
-                byte[] TempBytes = fileReader.ReadBytes((int)fileStream.Length);
-                if (item.Value == TempBytes.EXGetSha1())
-                {
-                    CombineWriter.Write(TempBytes);
-                }
-            }
-            CombineWriter.Close();
-            CombineStream.Close();
-            LOG.INFO("正在读取校验SHA1，时间可能较长，请稍后");
-            var SHA1 = new FileInfo(combineFile).ExGetSha1();
-            if (SHA1 == file.SHA)
-            {
-                LOG.INFO($"{SHA1}：校验成功");
-                return true;
-            }
-            else
-            {
-                LOG.ERROR($"校验失败：{SHA1}");
-                return false;
-            }
+            await Task.Run(() =>
+             {
+                 if (File.Exists(combineFile))
+                 {
+                     LOG.INFO("文件已存在，正在读取校验SHA1，时间可能较长，请稍后");
+                     var SHA = new FileInfo(combineFile).ExGetSha1();
+                     if (SHA == file.SHA)
+                     {
+                         LOG.INFO($"{SHA}：校验成功");
+                         return true;
+                     }
+                     else
+                     {
+                         LOG.INFO($"{SHA}：校验失败，尝试覆盖当前文件");
+                     }
+                 }
+                 LOG.INFO($"{file.SHA}:正在合并文件");
+                 using var CombineStream = new FileStream(combineFile, FileMode.OpenOrCreate);
+                 using var CombineWriter = new BinaryWriter(CombineStream);
+                 foreach (var item in file.SubFiles.OrderBy(o => o.Key))
+                 {
+                     LOG.INFO($"{file.SHA}:正在合并文件 {item.Key + 1}/{file.SubFiles.Count}");
+                     using var fileStream = new FileStream($@"{Workdir}{item.Value}", FileMode.Open);
+                     using var fileReader = new BinaryReader(fileStream);
+                     byte[] TempBytes = fileReader.ReadBytes((int)fileStream.Length);
+                     if (item.Value == TempBytes.EXGetSha1())
+                     {
+                         CombineWriter.Write(TempBytes);
+                     }
+                 }
+                 CombineWriter.Close();
+                 CombineStream.Close();
+                 LOG.INFO("正在读取校验SHA1，时间可能较长，请稍后");
+                 var SHA1 = new FileInfo(combineFile).ExGetSha1();
+                 if (SHA1 == file.SHA)
+                 {
+                     LOG.INFO($"{SHA1}：校验成功");
+                     return true;
+                 }
+                 else
+                 {
+                     LOG.ERROR($"校验失败：{SHA1}");
+                     return false;
+                 }
+             });
+            return false;
         }
 
         private static async Task<bool> HttpDownload(string url, string path, string sha1, int speedlimit = 1024 * 1000 * 100)
         {
+            Directory.CreateDirectory(TempDir);
+            var tempFile = TempDir+"\\"+sha1;
+
             try
             {
-                var tempFile = Path.GetTempFileName();
                 var fs = new FileStream(tempFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 var request = WebRequest.Create(url) as HttpWebRequest;
                 var response = request.GetResponse() as HttpWebResponse;
@@ -242,7 +248,7 @@ namespace TXQ.Utils.P2P
             }
             catch (Exception ex)
             {
-                LOG.ERROR($"{sha1}:下载失败，{ex.Message}");
+                LOG.ERROR($"{sha1}{url}:下载失败，{ex.Message}");
                 return false;
             }
         }
@@ -279,7 +285,7 @@ namespace TXQ.Utils.P2P
                 await Task.Delay(1000);
             }
             LOG.INFO($"{DHT.SHA},下载完成");
-            CombineFiles(DHT, path + DHT.FileName);
+            await CombineFiles(DHT, path + DHT.FileName);
             return path + DHT.FileName;
 
         }
