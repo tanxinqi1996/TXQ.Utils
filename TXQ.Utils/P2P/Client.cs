@@ -173,7 +173,7 @@ namespace TXQ.Utils.P2P
                      }
                  }
                  LOG.INFO($"{file.SHA}:正在合并文件");
-                 using var CombineStream = new FileStream(combineFile, FileMode.OpenOrCreate);
+                 using var CombineStream = new FileStream(combineFile, FileMode.Open);
                  using var CombineWriter = new BinaryWriter(CombineStream);
                  foreach (var item in file.SubFiles.OrderBy(o => o.Key))
                  {
