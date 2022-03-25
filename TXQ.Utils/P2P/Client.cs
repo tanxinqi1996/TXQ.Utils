@@ -18,6 +18,7 @@ namespace TXQ.Utils.P2P
         public static string Workdir;
         public static string TempDir = Path.GetTempPath();//向Tracker汇报的Peer地址
         public static string _peer => $@"http://{_host}:{_port}/";
+        public static int Level = 100;
         private static int _port = 55555;
         private static string _host;
         //Tracker服务器
@@ -390,7 +391,7 @@ namespace TXQ.Utils.P2P
                       try
                       {
                           var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name).EXToJSON();
-                          var url = $"{_tracker}api/peer?peer={_peer}";
+                          var url = $"{_tracker}api/peer?peer={_peer}&level={Level}";
                           var res = HTTP.Post(url, list).Result;
 
                           if (res == "true")
