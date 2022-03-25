@@ -92,6 +92,7 @@ namespace TXQ.Utils.Tool
 
         private static void WriteTextBox(string Content, LogLevel Level)
         {
+
             if (LogRichTextBox != null)
             {
                 Color color = Color.Black;
@@ -110,18 +111,19 @@ namespace TXQ.Utils.Tool
                         color = Color.DarkGray;
                         break;
                 }
-                LogRichTextBox.AppendColorText(Content, color);
+                //LogRichTextBox.BeginInvoke(new EventHandler(delegate
+                //{
+                    LogRichTextBox.AppendColorText(Content, color);
 
-                LogRichTextBox.Invoke(new EventHandler(delegate
-                {
-                    if (LogRichTextBox.Lines.Length > 1000)
-                    {
-                        LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
-                    }
-                }));
+                    //if (LogRichTextBox.Lines.Length > 1000)
+                    //{
+                    //    LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
+                    //}
+                //}));
 
 
             }
+
 
         }
 

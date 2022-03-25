@@ -121,6 +121,65 @@ namespace TXQ.Utils.Tool
             return ExitCode;
         }
 
+
+        /// <summary>
+        /// 执行CMD命令，输出到LOG中
+        /// </summary>
+        /// <param name="CMD"></param>
+        /// <returns></returns>
+        public static async Task<int> RunInLog(string CMD)
+        {
+            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
+            using var sw = new StreamWriter(tempfile, false, DefaultEncoding);
+            sw.Write(CMD);
+            sw.Close();
+            int ExitCode;
+
+            Process cmdProcess = new Process();
+
+            cmdProcess.StartInfo.FileName = tempfile;
+            //若要使用异步输出则必须不使用操作系统外壳
+            cmdProcess.StartInfo.UseShellExecute = false;
+            //打开输出重定向
+            cmdProcess.StartInfo.RedirectStandardOutput = true;
+            //打开错误重定向
+            cmdProcess.StartInfo.RedirectStandardError = true;
+            //若要使用异步输出则必须不创建新窗口
+            cmdProcess.StartInfo.CreateNoWindow = true;
+
+            //指定异步输出使用的编码方式
+            cmdProcess.StartInfo.StandardOutputEncoding = DefaultEncoding;
+            //指定异步错误使用的编码方式
+            cmdProcess.StartInfo.StandardErrorEncoding = DefaultEncoding;
+            //将输出处理函数重定向到输出处理委托
+            cmdProcess.OutputDataReceived += (s, _e) => LOG.INFO(_e.Data);
+            cmdProcess.ErrorDataReceived += (s, _e) =>LOG.ERROR(_e.Data);
+            //启动控制台进程
+            cmdProcess.Start();
+            //开始异步读取输出流
+            cmdProcess.BeginOutputReadLine();
+            //开始异步读取错误流
+            cmdProcess.BeginErrorReadLine();
+
+            //等待进程退出
+            await Task.Run(() =>
+             {
+                 cmdProcess.WaitForExit();
+             });
+            ExitCode = cmdProcess.ExitCode;
+
+            //结束异步读取错误流
+            cmdProcess.CancelErrorRead();
+            //结束异步读取输出流
+            cmdProcess.CancelOutputRead();
+            return ExitCode;
+
+
+
+        }
+
+
+
         /// <summary>
         /// 运行CMD命令并实时显示在Form中
         /// </summary>

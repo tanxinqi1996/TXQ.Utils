@@ -91,6 +91,7 @@ namespace TXQ.Utils.Interior
             if (e.Data != null)
             {
                 LogAppend(Color.Black, e.Data);
+                TXQ.Utils.Tool.LOG.INFO(e.Data);
             }
 
         }
@@ -100,6 +101,8 @@ namespace TXQ.Utils.Interior
             if (e.Data != null)
             {
                 LogAppend(Color.Red, e.Data);
+                TXQ.Utils.Tool.LOG.INFO(e.Data);
+
             }
         }
 

@@ -17,21 +17,13 @@ namespace DEMO
             InitializeComponent();
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        private async void Form1_Shown(object sender, EventArgs e)
         {
-            var D = TXQ.Utils.WinAPI.PCINFO.Disk;
-            tPagerControl1.DrawControl(D.Count, D);
+            TXQ.Utils.Tool.LOG.LogRichTextBox = richTextBox1;
+            int exitcoud = await TXQ.Utils.Tool.CMD.RunInLog("PING QQ.COM");
+            TXQ.Utils.Tool.LOG.INFO($"{exitcoud}");
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            tPagerControl1.DataGridView.Columns[0].HeaderText = "aa";
-        }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            TXQ.Utils.P2P.Client.Init();
-
-        }
     }
 }
