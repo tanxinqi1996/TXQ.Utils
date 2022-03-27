@@ -28,28 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.tPagerControl1 = new TXQ.Utils.Controls.TPagerControl();
             this.SuspendLayout();
             // 
-            // richTextBox1
+            // tPagerControl1
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(1031, 936);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.tPagerControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tPagerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tPagerControl1.Location = new System.Drawing.Point(0, 0);
+            this.tPagerControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tPagerControl1.Name = "tPagerControl1";
+            this.tPagerControl1.PageCount = 0;
+            this.tPagerControl1.PageIndex = 1;
+            this.tPagerControl1.PageSize = 100;
+            this.tPagerControl1.RecordCount = 0;
+            this.tPagerControl1.ShowExport = true;
+            this.tPagerControl1.ShowTaskBar = true;
+            this.tPagerControl1.Size = new System.Drawing.Size(1031, 936);
+            this.tPagerControl1.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1031, 936);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.tPagerControl1);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "GE";
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.ResumeLayout(false);
 
@@ -57,7 +64,7 @@
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private TXQ.Utils.Controls.TPagerControl tPagerControl1;
     }
 }
 

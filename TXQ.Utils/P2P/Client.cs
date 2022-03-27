@@ -102,7 +102,7 @@ namespace TXQ.Utils.P2P
         public static long DownLoad => _DownLoad;
 
         //Tracker服务器
-        public static string _tracker = "http://192.168.31.239:44444/";
+        public static string _tracker = "http://server:44444/";
 
         //文件下载超时 30s
         private static int _downloadTimeout = 1000 * 30;

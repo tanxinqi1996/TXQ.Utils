@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
+    <ReactorProject>"C:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
@@ -16,9 +16,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\TXQ.Utils\TXQ.Utils.csproj" />
   </ItemGroup>
-
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="C:\Source\OneDrive\开发\加密配置.nrproj" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="ReactorCall" AfterTargets="Compile">
+    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
+  </Target>
 </Project>

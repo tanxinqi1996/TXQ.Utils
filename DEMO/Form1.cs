@@ -19,9 +19,8 @@ namespace DEMO
 
         private async void Form1_Shown(object sender, EventArgs e)
         {
-            TXQ.Utils.Tool.LOG.LogRichTextBox = richTextBox1;
-            int exitcoud = await TXQ.Utils.Tool.CMD.RunInLog("PING QQ.COM");
-            TXQ.Utils.Tool.LOG.INFO($"{exitcoud}");
+            var cfg = TXQ.Utils.WinAPI.PcInfo.NetWorkConfig.Win32_NetworkConfigs;
+            tPagerControl1.DrawControl(cfg.Count, cfg);
         }
 
 
