@@ -13,14 +13,93 @@ namespace TXQ.Utils.P2P
 {
     public static class Client
     {
+
+        static Client()
+        {
+            //初始化数据目录
+            LOG.INFO($"DataDir:{Workdir}");
+            Level = ExIni.Read("P2P", "Level", 100, true);
+            Speedlimit = ExIni.Read("P2P", "SpeedLimit", 100, true) * 1024 * 1024;
+            Connection = ExIni.Read("P2P", "Conntions", 5, true);
+            TellTrackerLimit = ExIni.Read("P2P", "TellTrackerLimit", 10, true);
+            //获取IP
+            foreach (var item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                if (item.ToString().StartsWith("192.168.2"))
+                {
+                    _host = item.ToString();
+                    break;
+                }
+            }
+            if (_host == null)
+            {
+                _host = ExIni.Read("P2P", "ReportIP", _host);
+            }
+
+            if (_host == null) throw new Exception("没有找到可用的IP");
+
+            //初始化HttpListener
+            _httplistener = new HttpListener(); //创建监听实例
+            _httplistener.Prefixes.Add($@"http://*:{_port}/"); //添加监听地址 注意是以/结尾。
+            LOG.INFO($"ListenOn:http://*:{_port}/");
+            LOG.INFO($"Peer:{_peer}");
+            _httplistener.Start();
+            Task.Run(HTTPListener);
+            Task.Run(async () =>
+           {
+               int lastreport = 0;
+               while (true)
+               {
+                   try
+                   {
+                       var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name);
+                       var url = $"{_tracker}api/peer?peer={_peer}&level={Level}";
+                       string res = "false";
+                       if (lastreport != list.Count())
+                       {
+                           LOG.DEBUG($"{ list.Count() - lastreport}change");
+                           res = HTTP.Post(url, list.EXToJSON()).Result;
+                       }
+                       else
+                       {
+                           LOG.DEBUG("Nochange");
+                           res = HTTP.Post(url, "[]").Result;
+                       }
+
+                       if (res == "true")
+                       {
+                           lastreport = list.Count();
+                           LOG.DEBUG("Tell Tracker Succecc");
+                       }
+                       else
+                       {
+                           throw new Exception("Tracker Report Error，Unknown Error!");
+                       }
+                       await Task.Delay(1000 * TellTrackerLimit);
+                   }
+                   catch (Exception ex)
+                   {
+                       LOG.ERROR($"Tell Tracker Error：{ex.Message}");
+                   }
+               }
+           });
+
+        }
+
         private static HttpListener _httplistener = null; //文件下载处理请求监听
         //数据目录
-        public static string Workdir;
+        public static string Workdir = Environment.CurrentDirectory + "\\Data\\";
         public static string TempDir = Path.GetTempPath();//向Tracker汇报的Peer地址
         public static string _peer => $@"http://{_host}:{_port}/";
         public static int Level = 100;
         private static int _port = 55555;
-        private static string _host;
+        public static string _host;
+        private static long _Send = 0;
+        private static long _DownLoad = 0;
+
+        public static long Send => _Send;
+        public static long DownLoad => _DownLoad;
+
         //Tracker服务器
         public static string _tracker = "http://192.168.31.239:44444/";
 
@@ -28,64 +107,71 @@ namespace TXQ.Utils.P2P
         private static int _downloadTimeout = 1000 * 30;
 
         //单线程下载速度限制 10m
-        private static int _speedlimit = 1024 * 1024 * 20;
-        private static int _downloadconnection = 10;
-
-        private static long _ID = 1;
-        private static int _Conntions = 0;
+        private static long Speedlimit = 1024 * 1024 * 10;
+        private static int Connection = 5;
+        public static int TellTrackerLimit = 15;
         private static void HTTPListener()
         {
             while (true)
             {
                 var request = _httplistener.GetContext(); //接受到新的请求
-                var id = _ID++;
                 var watcher = Stopwatch.StartNew();
-                LOG.INFO($@"Request {id} Start  Path:{request.Request.RawUrl}");
-                _Conntions++;
+                LOG.DEBUG($@"Request Start Path:{request.Request.RawUrl}");
                 Task.Run(new Action(() =>
                 {
                     try
                     {
                         var path = Workdir + request.Request.RawUrl;
-                        if (File.Exists(path) == false)
+                        if (request.Request.RawUrl == "/check")
                         {
-                            request.SendText("File Not Found", 404);
+                            request.HttpSendText("im ok", 200);
+                            return;
+                        }
+                        else if (File.Exists(path) == false)
+                        {
+                            request.HttpSendText("File Not Found", 404);
+                            return;
+
                         }
                         else if (path.EndsWith(".txt"))
                         {
-                            request.SendText(File.ReadAllText(path), 200);
+                            request.HttpSendText(File.ReadAllText(path), 200);
+                            return;
+
                         }
                         else if (path.EndsWith(".json"))
                         {
-                            request.SendText(File.ReadAllText(path), 200);
+                            request.HttpSendText(File.ReadAllText(path), 200);
+                            return;
+
                         }
                         else if (path.EndsWith(".xml"))
                         {
-                            request.SendText(File.ReadAllText(path), 200);
+                            request.HttpSendText(File.ReadAllText(path), 200);
+                            return;
                         }
                         else
                         {
-                            request.SendFile();
-                        }
+                            request.HttpSendFile();
+                            return;
 
+                        }
                     }
                     catch
                     {
-                        request.SendText("File Not Found", 404);
+                        request.HttpSendText("File Not Found", 404);
                     }
                     finally
                     {
                         request.Response.OutputStream.Close();
-                        LOG.INFO($@"Request {id} End  Code:{request.Response.StatusCode}  {watcher.ElapsedMilliseconds}ms");
+                        LOG.DEBUG($@"Request End Path:{request.Request.RawUrl}  Code:{request.Response.StatusCode}  {watcher.ElapsedMilliseconds}ms");
                         watcher.Stop();
-                        _Conntions--;
-
                     }
                 }));
             }
         }
 
-        private static void SendText(this HttpListenerContext httpListener, string content, int code = 200)
+        private static void HttpSendText(this HttpListenerContext httpListener, string content, int code = 200)
         {
             httpListener.Response.StatusCode = code;
             httpListener.Response.ContentType = "application/json";
@@ -95,24 +181,35 @@ namespace TXQ.Utils.P2P
             httpListener.Response.OutputStream.Write(buffer, 0, buffer.Length);
 
         }
-        private static void SendFile(this HttpListenerContext httpListener)
+        private static void HttpSendFile(this HttpListenerContext httpListener)
         {
             var path = Workdir + httpListener.Request.RawUrl;
             var file = new FileInfo(path);
-            FileStream fs = new(file.FullName, FileMode.Open, FileAccess.Read);
-            var buffer = new byte[fs.Length];
-            fs.Read(buffer, 0, (int)fs.Length); //将文件读到缓存区
+            using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
             httpListener.Response.StatusCode = 200;
             httpListener.Response.Headers.Add("content-disposition", $@"attachment;filename={file.Name}");
             httpListener.Response.ContentType = "application/octet-stream";
-            httpListener.Response.ContentLength64 = buffer.Length;
-            httpListener.Response.OutputStream.Write(buffer, 0, buffer.Length);  //将缓存区的字节数写入当前请求流返回
+            httpListener.Response.ContentLength64 = fs.Length;
+            byte[] buffer = new byte[1024 * 1024];
+            int read;
+            while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                httpListener.Response.OutputStream.Write(buffer, 0, read);
+                _Send += buffer.Length;
+            }
             httpListener.Response.OutputStream.Close();
             fs.Close();
-
         }
 
-
+        private static void CopyStream(Stream orgStream, Stream desStream)
+        {
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = orgStream.Read(buffer, 0, 1024)) > 0)
+            {
+                desStream.Write(buffer, 0, read);
+            }
+        }
 
         public static void GenerateDHT(string InputFile, string OutPutFilePath, int cutFileSize = 1024 * 1024 * 100)
         {
@@ -173,21 +270,24 @@ namespace TXQ.Utils.P2P
                      }
                  }
                  LOG.INFO($"{file.SHA}:正在合并文件");
-                 using var CombineStream = new FileStream(combineFile, FileMode.Open);
-                 using var CombineWriter = new BinaryWriter(CombineStream);
+                 using var CombineFS = File.OpenWrite(combineFile);
+                 using var CombineFW = new BinaryWriter(CombineFS);
+
                  foreach (var item in file.SubFiles.OrderBy(o => o.Key))
                  {
                      LOG.INFO($"{file.SHA}:正在合并文件 {item.Key + 1}/{file.SubFiles.Count}");
-                     using var fileStream = new FileStream($@"{Workdir}{item.Value}", FileMode.Open);
-                     using var fileReader = new BinaryReader(fileStream);
-                     byte[] TempBytes = fileReader.ReadBytes((int)fileStream.Length);
-                     if (item.Value == TempBytes.EXGetSha1())
-                     {
-                         CombineWriter.Write(TempBytes);
-                     }
+                     using var fs = File.OpenRead($@"{Workdir}{item.Value}");
+                     using var fr = new BinaryReader(fs);
+                     byte[] TempBytes = fr.ReadBytes((int)fs.Length);
+                     //  if (item.Value == TempBytes.EXGetSha1())
+                     //  {
+                     CombineFW.Write(TempBytes);
+                     //   }
+                     fs.Close();
+                     fr.Close();
                  }
-                 CombineWriter.Close();
-                 CombineStream.Close();
+                 CombineFS.Close();
+                 CombineFW.Close();
                  LOG.INFO("正在读取校验SHA1，时间可能较长，请稍后");
                  var SHA1 = new FileInfo(combineFile).ExGetSha1();
                  if (SHA1 == file.SHA)
@@ -204,18 +304,22 @@ namespace TXQ.Utils.P2P
             return false;
         }
 
-        private static async Task<bool> HttpDownload(string url, string path, string sha1, int speedlimit = 1024 * 1000 * 100)
+        private static async Task<bool> HttpDownload(string url, string path, string sha1, long speedlimit = 1024 * 1000 * 100)
         {
             Directory.CreateDirectory(TempDir);
-            var tempFile = TempDir+"\\"+sha1;
-
+            var tempFile = TempDir + "\\" + Guid.NewGuid().ToString();
+            if (File.Exists(tempFile))
+            {
+                File.Delete(tempFile);
+            }
             try
             {
+
                 var fs = new FileStream(tempFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 var request = WebRequest.Create(url) as HttpWebRequest;
                 var response = request.GetResponse() as HttpWebResponse;
                 var responseStream = response.GetResponseStream();
-                var bArr = new byte[1024];
+                var bArr = new byte[1024 * 1024];
                 int size = responseStream.Read(bArr, 0, bArr.Length);
                 //创建计时器
                 var watcher = new Stopwatch();
@@ -225,14 +329,14 @@ namespace TXQ.Utils.P2P
                 while (size > 0)
                 {
                     //限速相关代码
-                    if (watcher.ElapsedMilliseconds < 200 && lenth > speedlimit / 5)
+                    if (watcher.ElapsedMilliseconds < 100 && lenth > speedlimit / 10)
                     {
                         lenth = 0;
-                        await Task.Delay((int)(200 - watcher.ElapsedMilliseconds));
+                        await Task.Delay((int)(100 - watcher.ElapsedMilliseconds));
                         watcher.Restart();
                     }
                     lenth += size;
-
+                    _DownLoad += size;
                     await fs.WriteAsync(bArr, 0, size);
                     size = responseStream.Read(bArr, 0, bArr.Length);
                 }
@@ -241,7 +345,7 @@ namespace TXQ.Utils.P2P
                 var hash = new FileInfo(tempFile).ExGetSha1();
                 if (sha1 != hash)
                 {
-                    throw new Exception("HASH校验失败");
+                    throw new Exception($"HASH校验失败:{sha1};{hash}");
                 }
                 LOG.INFO($"{sha1}:HASH校验完成，下载成功");
                 File.Move(tempFile, path);
@@ -249,12 +353,16 @@ namespace TXQ.Utils.P2P
             }
             catch (Exception ex)
             {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
                 LOG.ERROR($"{sha1}{url}:下载失败，{ex.Message}");
                 return false;
             }
         }
 
-        public static async Task<string> DownLoadFile(DHT DHT, string path)
+        public static async Task<string> DownLoadDHTFile(DHT DHT, string path)
         {
 
             var tasks = new List<Task>();
@@ -268,7 +376,7 @@ namespace TXQ.Utils.P2P
                 }
                 tasks.Add(new Task(() =>
                 {
-                    Add(ITEM.Value);
+                    SubDownLoadTask(ITEM.Value);
                 }));
             }
             Stopwatch watch = Stopwatch.StartNew();
@@ -277,7 +385,7 @@ namespace TXQ.Utils.P2P
                 var waittorun = tasks.Where(O => O.Status == TaskStatus.Created).ToList();
                 int running = tasks.Where(O => (O.Status == TaskStatus.Running)).Count();
                 int IsCompleted = tasks.Where(O => O.IsCompleted).Count();
-                if (waittorun.Count > 0 && running < _downloadconnection)
+                if (waittorun.Count > 0 && running < Connection)
                 {
                     int I = new Random().Next(0, waittorun.Count);
                     waittorun[I].Start();
@@ -291,7 +399,7 @@ namespace TXQ.Utils.P2P
 
         }
 
-        public static async void Add(string sha)
+        public static async void SubDownLoadTask(string sha)
         {
             LOG.INFO($"{sha}: 开始下载");
 
@@ -325,7 +433,11 @@ namespace TXQ.Utils.P2P
                             Directory.CreateDirectory(Workdir);
                             LOG.INFO($"DataDir:{Workdir}");
                         }
-                        var downloadok = HttpDownload(peerurl, Workdir + sha, sha, _speedlimit);
+                        if (HTTP.Get($"{peerurl}check").Wait(500) == false)
+                        {
+                            throw new Exception("无法连接到Peer");
+                        }
+                        var downloadok = HttpDownload(peerurl, Workdir + sha, sha, Speedlimit);
                         if (downloadok.Wait(_downloadTimeout))
                         {
                             if (downloadok.Result == true)
@@ -343,7 +455,8 @@ namespace TXQ.Utils.P2P
                 }
                 catch (Exception ex)
                 {
-                    LOG.INFO($"{sha}: 下载错误;trackerurl:{trackerurl} peerurl:{peerurl} {ex.Message} ");
+                    LOG.INFO($"{sha}: 下载错误; peerurl:{peerurl} {ex.Message} ");
+                    await Task.Delay(2000);
 
                 }
 
@@ -351,65 +464,5 @@ namespace TXQ.Utils.P2P
 
         }
 
-        public static void Init(bool startpeer = true, string workdir = null)
-        {
-            //初始化数据目录
-            Workdir = workdir ?? Environment.CurrentDirectory + "\\Data\\";
-            LOG.INFO($"DataDir:{Workdir}");
-
-            //创建数据目录
-            if (Directory.Exists(Workdir) == false)
-            {
-                Directory.CreateDirectory(Workdir);
-                LOG.INFO($"DataDir:{Workdir}");
-            }
-
-            if (startpeer == false) return;
-
-            //获取IP
-            foreach (var item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
-            {
-                if (item.ToString().StartsWith("192.168"))
-                {
-                    _host = item.ToString();
-                    break;
-                }
-            }
-            if (_host == null) throw new Exception("没有找到可用的IP");
-
-            //初始化HttpListener
-            _httplistener = new HttpListener(); //创建监听实例
-            _httplistener.Prefixes.Add($@"http://*:{_port}/"); //添加监听地址 注意是以/结尾。
-            LOG.INFO($"ListenOn:http://*:{_port}/");
-            LOG.INFO($"Peer:{_peer}");
-            _httplistener.Start();
-            Task.Run(HTTPListener);
-            var t = Task.Run(async () =>
-              {
-                  while (true)
-                  {
-                      try
-                      {
-                          var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name).EXToJSON();
-                          var url = $"{_tracker}api/peer?peer={_peer}&level={Level}";
-                          var res = HTTP.Post(url, list).Result;
-
-                          if (res == "true")
-                          {
-                              LOG.INFO("Tell Tracker Succecc");
-                          }
-                          else
-                          {
-                              throw new Exception("Unknown Error!");
-                          }
-                          await Task.Delay(1000 * 30);
-                      }
-                      catch
-                      {
-                      }
-                  }
-              });
-
-        }
     }
 }

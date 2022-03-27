@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Dism" Version="2.4.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MiniExcel" Version="1.24.0" />
+    <PackageReference Include="MiniExcel" Version="1.24.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SharpZipLib" Version="1.3.3" />
     <PackageReference Include="System.Management" Version="6.0.0" />
@@ -52,9 +52,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="D:\Source\OneDrive\开发\加密配置.nrproj" />
-    </VisualStudio>
+    <VisualStudio><UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="D:\Source\OneDrive\开发\加密配置.nrproj" /></VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">
     <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
