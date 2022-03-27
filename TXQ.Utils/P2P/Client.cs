@@ -16,6 +16,8 @@ namespace TXQ.Utils.P2P
 
         static Client()
         {
+            Directory.CreateDirectory(TempDir);
+            Directory.CreateDirectory(Workdir);
             //初始化数据目录
             LOG.INFO($"DataDir:{Workdir}");
             Level = ExIni.Read("P2P", "Level", 100, true);
@@ -312,6 +314,8 @@ namespace TXQ.Utils.P2P
             {
                 File.Delete(tempFile);
             }
+            Directory.CreateDirectory(TempDir);
+            Directory.CreateDirectory(Workdir);
             try
             {
 
