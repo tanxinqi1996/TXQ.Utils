@@ -412,7 +412,7 @@ namespace TXQ.Utils.P2P
             }
             while (!File.Exists(filename))
             {
-                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=1";
+                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=10";
                 string peerurl = null;
                 try
                 {
