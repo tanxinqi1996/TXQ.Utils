@@ -27,16 +27,15 @@ namespace TXQ.Utils.P2P
             //获取IP
             foreach (var item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
             {
-                if (item.ToString().StartsWith("192.168.2"))
+                if (item.ToString().StartsWith("192.168"))
                 {
                     _host = item.ToString();
                     break;
                 }
             }
-            if (_host == null)
-            {
-                _host = ExIni.Read("P2P", "ReportIP", _host);
-            }
+
+            _host = ExIni.Read("P2P", "ReportIP", _host, true);
+
 
             if (_host == null) throw new Exception("没有找到可用的IP");
 
@@ -416,7 +415,7 @@ namespace TXQ.Utils.P2P
             }
             while (!File.Exists(filename))
             {
-                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=10";
+                string trackerurl = $"{_tracker}api/peer?filehash={sha}&count=1";
                 string peerurl = null;
                 try
                 {
@@ -427,16 +426,15 @@ namespace TXQ.Utils.P2P
                         throw new Exception($"Tracker Report Error;Request:{trackerurl};Reslt:{Peers}");
                     }
                     var p = Peers.EXJsonToType<List<string>>();
+                    LOG.DEBUG($"{sha}：Found Peer {Peers}");
                     foreach (var ITEM in Peers.EXJsonToType<List<string>>())
                     {
                         peerurl = ITEM + sha;
                         LOG.INFO($"{sha}: form {ITEM}");
 
-                        if (Directory.Exists(Workdir) == false)
-                        {
-                            Directory.CreateDirectory(Workdir);
-                            LOG.INFO($"DataDir:{Workdir}");
-                        }
+
+                        Directory.CreateDirectory(Workdir);
+
                         if (HTTP.Get($"{peerurl}check").Wait(500) == false)
                         {
                             throw new Exception("无法连接到Peer");

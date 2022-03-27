@@ -21,7 +21,7 @@ namespace ConsoleDEMO
 
             string file = @"\\SERVER\Share\Release\OS\PS2404103WIN10纯净版(20220224).dht";
             var DHT = File.ReadAllText(file).EXJsonToType<TXQ.Utils.P2P.DHT>();
-         //   var D = TXQ.Utils.P2P.Client.DownLoadFile(DHT, "C:\\").Result;
+           var D = TXQ.Utils.P2P.Client.DownLoadDHTFile(DHT, "C:\\aaa\\").Result;
             Console.Read();
         }
     }
