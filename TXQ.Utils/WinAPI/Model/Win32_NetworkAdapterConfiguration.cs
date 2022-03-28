@@ -4,43 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TXQ.Utils.WinAPI.PcInfo
+namespace TXQ.Utils.WinAPI.Model
 {
-
-    public static class NetWorkConfig
-    {
-        public static List<Win32_NetworkAdapterConfiguration> Win32_NetworkConfigs
-        {
-            get
-            {
-                List<Win32_NetworkAdapterConfiguration> list = new List<Win32_NetworkAdapterConfiguration>();
-
-                foreach (var item in WinAPI.Wmic.SearchWMI("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE MACAddress!= NULL"))
-                {
-
-
-
-                    var cfg = new Win32_NetworkAdapterConfiguration
-                    {
-                        MacAdress = Convert.ToString(item["MACAddress"]),
-                        Caption = Convert.ToString(item["Caption"]),
-                        Description = Convert.ToString(item["Description"]),
-                        IPSubnet = (string[])(item["IPSubnet"]),
-                        IPAddress = (string[])(item["IPAddress"]),
-                        IPEnabled = Convert.ToBoolean(item["IPEnabled"])
-                    };
-                    cfg.Description = Convert.ToString(item["Description"]);
-                    cfg.DHCPEnabled = Convert.ToBoolean(item["DHCPEnabled"]);
-                    cfg.DHCPServer = Convert.ToString(item["DHCPServer"]);
-                    cfg.Index = Convert.ToInt32(item["Index"]);
-
-                    list.Add(cfg);
-                }
-                return list;
-            }
-
-        }
-    }
     public class Win32_NetworkAdapterConfiguration
     {
 
@@ -93,6 +58,5 @@ namespace TXQ.Utils.WinAPI.PcInfo
 
 
     }
-
 
 }

@@ -16,8 +16,6 @@ namespace TXQ.Utils.P2P
 
         static Client()
         {
-            Directory.CreateDirectory(TempDir);
-            Directory.CreateDirectory(Workdir);
             //初始化数据目录
             LOG.INFO($"DataDir:{Workdir}");
             Level = ExIni.Read("P2P", "Level", 100, true);
@@ -25,18 +23,7 @@ namespace TXQ.Utils.P2P
             Connection = ExIni.Read("P2P", "Conntions", 5, true);
             TellTrackerLimit = ExIni.Read("P2P", "TellTrackerLimit", 10, true);
             //获取IP
-            foreach (var item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
-            {
-                if (item.ToString().StartsWith("192.168"))
-                {
-                    _host = item.ToString();
-                    break;
-                }
-            }
-
-            _host = ExIni.Read("P2P", "ReportIP", _host, true);
-
-
+            _host = ExIni.Read("P2P", "ReportIP", Environment.UserDomainName, true);
             if (_host == null) throw new Exception("没有找到可用的IP");
 
             //初始化HttpListener
@@ -48,29 +35,16 @@ namespace TXQ.Utils.P2P
             Task.Run(HTTPListener);
             Task.Run(async () =>
            {
-               int lastreport = 0;
                while (true)
                {
                    try
                    {
                        var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name);
                        var url = $"{_tracker}api/peer?peer={_peer}&level={Level}";
-                       string res = "false";
-                       if (lastreport != list.Count())
-                       {
-                           LOG.DEBUG($"{ list.Count() - lastreport}change");
-                           res = HTTP.Post(url, list.EXToJSON()).Result;
-                       }
-                       else
-                       {
-                           LOG.DEBUG("Nochange");
-                           res = HTTP.Post(url, "[]").Result;
-                       }
-
+                       var res = HTTP.Post(url, list.EXToJSON()).Result;
                        if (res == "true")
                        {
-                           lastreport = list.Count();
-                           LOG.DEBUG("Tell Tracker Succecc");
+                           LOG.DEBUG($"Tell Tracker Succecc: {list.Count()} File");
                        }
                        else
                        {
@@ -115,6 +89,8 @@ namespace TXQ.Utils.P2P
         {
             while (true)
             {
+                Directory.CreateDirectory(TempDir);
+                Directory.CreateDirectory(Workdir);
                 var request = _httplistener.GetContext(); //接受到新的请求
                 var watcher = Stopwatch.StartNew();
                 LOG.DEBUG($@"Request Start Path:{request.Request.RawUrl}");

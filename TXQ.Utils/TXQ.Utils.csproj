@@ -34,7 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Seagull.BarTender.Print">
-      <HintPath>C:\Program Files (x86)\Seagull\BarTender Suite\SDK\Assemblies\Seagull.BarTender.Print.dll</HintPath>
+      <HintPath>..\DLL\Seagull.BarTender.Print.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
   </ItemGroup>
