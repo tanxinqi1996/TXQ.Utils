@@ -16,7 +16,7 @@ namespace ConsoleDEMO
             LOG.LogLevel = LogLevel.ALL;
             // Core.Add("36579d1dfffcb27dad793af158dc6bc0ef23dff8");
 
-            TXQ.Utils.P2P.Client.Workdir = "C:\\WORK\\";
+            TXQ.Utils.P2P.Client.Workdir = "W:\\WORK\\";
 
 
             // string file = @"\\SERVER\Share\Release\OS\PS2404103WIN10纯净版(20220224).dht";

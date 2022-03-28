@@ -23,14 +23,14 @@ namespace TXQ.Utils.P2P
             Connection = ExIni.Read("P2P", "Conntions", 5, true);
             TellTrackerLimit = ExIni.Read("P2P", "TellTrackerLimit", 10, true);
             //获取IP
-            _host = ExIni.Read("P2P", "ReportIP", Environment.UserDomainName, true);
-            if (_host == null) throw new Exception("没有找到可用的IP");
+            Host = ExIni.Read("P2P", "ReportIP", Environment.UserDomainName, true);
+            if (Host == null) throw new Exception("没有找到可用的IP");
 
             //初始化HttpListener
             _httplistener = new HttpListener(); //创建监听实例
-            _httplistener.Prefixes.Add($@"http://*:{_port}/"); //添加监听地址 注意是以/结尾。
-            LOG.INFO($"ListenOn:http://*:{_port}/");
-            LOG.INFO($"Peer:{_peer}");
+            _httplistener.Prefixes.Add($@"http://*:{Port}/"); //添加监听地址 注意是以/结尾。
+            LOG.INFO($"ListenOn:http://*:{Port}/");
+            LOG.INFO($"Peer:{Peer}");
             _httplistener.Start();
             Task.Run(HTTPListener);
             Task.Run(async () =>
@@ -39,22 +39,26 @@ namespace TXQ.Utils.P2P
                {
                    try
                    {
+                       Directory.CreateDirectory(Workdir);
                        var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name);
-                       var url = $"{_tracker}api/peer?peer={_peer}&level={Level}";
+                       var url = $"{_tracker}api/peer?peer={Peer}&level={Level}";
                        var res = HTTP.Post(url, list.EXToJSON()).Result;
                        if (res == "true")
                        {
-                           LOG.DEBUG($"Tell Tracker Succecc: {list.Count()} File");
+                           LOG.DEBUG($"Tell Tracker Succecc WorkDir:{Workdir};Peer:{Peer};Level:{Level};File:{list.Count()}");
                        }
                        else
                        {
-                           throw new Exception("Tracker Report Error，Unknown Error!");
+                           throw new Exception("Unknown Error!");
                        }
-                       await Task.Delay(1000 * TellTrackerLimit);
                    }
                    catch (Exception ex)
                    {
-                       LOG.ERROR($"Tell Tracker Error：{ex.Message}");
+                       LOG.ERROR($"Tell Tracker Error WorkDir:{Workdir};Peer:{Peer};Level:{Level}{ex.Message}");
+                   }
+                   finally
+                   {
+                       await Task.Delay(1000 * TellTrackerLimit);
                    }
                }
            });
@@ -65,10 +69,10 @@ namespace TXQ.Utils.P2P
         //数据目录
         public static string Workdir = Environment.CurrentDirectory + "\\Data\\";
         public static string TempDir = Path.GetTempPath();//向Tracker汇报的Peer地址
-        public static string _peer => $@"http://{_host}:{_port}/";
+        public static string Peer => $@"http://{Host}:{Port}/";
         public static int Level = 100;
-        private static int _port = 55555;
-        public static string _host;
+        private static int Port = 55555;
+        public static string Host;
         private static long _Send = 0;
         private static long _DownLoad = 0;
 
@@ -89,8 +93,6 @@ namespace TXQ.Utils.P2P
         {
             while (true)
             {
-                Directory.CreateDirectory(TempDir);
-                Directory.CreateDirectory(Workdir);
                 var request = _httplistener.GetContext(); //接受到新的请求
                 var watcher = Stopwatch.StartNew();
                 LOG.DEBUG($@"Request Start Path:{request.Request.RawUrl}");
@@ -411,7 +413,7 @@ namespace TXQ.Utils.P2P
 
                         Directory.CreateDirectory(Workdir);
 
-                        if (HTTP.Get($"{peerurl}check").Wait(500) == false)
+                        if (HTTP.Get($"{ITEM}check").Wait(500) == false)
                         {
                             throw new Exception("无法连接到Peer");
                         }
