@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
-    <ReactorProject>"C:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
+    <ReactorProject>"D:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Controls\PageControl\TPagerControl.designer.cs" />
@@ -53,7 +53,7 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="C:\Source\OneDrive\开发\加密配置.nrproj" />
+      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="D:\Source\OneDrive\开发\加密配置.nrproj" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">

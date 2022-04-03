@@ -138,6 +138,7 @@ namespace TXQ.Utils.P2P
                     }
                     catch
                     {
+
                         request.HttpSendText("File Not Found", 404);
                     }
                     finally
@@ -164,28 +165,30 @@ namespace TXQ.Utils.P2P
         {
             var path = Workdir + httpListener.Request.RawUrl;
             var file = new FileInfo(path);
+
+
+            httpListener.Response.AddHeader("Accept-Ranges", "bytes");//重要：续传必须  
+
             using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-            httpListener.Response.StatusCode = 200;
-            httpListener.Response.Headers.Add("content-disposition", $@"attachment;filename={file.Name}");
-            httpListener.Response.ContentType = "application/octet-stream";
+
             httpListener.Response.ContentLength64 = fs.Length;
-            byte[] buffer = new byte[1024 * 1024];
-            int read;
-            while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                httpListener.Response.OutputStream.Write(buffer, 0, read);
-                _Send += buffer.Length;
-            }
+
+            httpListener.Response.ContentType = "application/octet-stream";
+            httpListener.Response.AddHeader("Content-Disposition", $@"attachment;filename={file.Name}");
+
+
+            CopyStream(fs, httpListener.Response.OutputStream); //文件传输
             httpListener.Response.OutputStream.Close();
             fs.Close();
         }
 
         private static void CopyStream(Stream orgStream, Stream desStream)
         {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 1024];
             int read;
             while ((read = orgStream.Read(buffer, 0, 1024)) > 0)
             {
+                _Send += buffer.Length;
                 desStream.Write(buffer, 0, read);
             }
         }
