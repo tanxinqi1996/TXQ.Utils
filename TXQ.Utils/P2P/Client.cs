@@ -163,19 +163,31 @@ namespace TXQ.Utils.P2P
         }
         private static void HttpSendFile(this HttpListenerContext httpListener)
         {
-            var path = Workdir + httpListener.Request.RawUrl;
-            var file = new FileInfo(path);
+            var file = new FileInfo( Workdir + httpListener.Request.RawUrl);
 
-
-            httpListener.Response.AddHeader("Accept-Ranges", "bytes");//重要：续传必须  
+          //  httpListener.Response.AddHeader("Accept-Ranges", "bytes");//重要：续传必须  
 
             using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 
-            httpListener.Response.ContentLength64 = fs.Length;
-
+            long startPos = 0;
+            string range = httpListener.Response.Headers["Range"];
+            Console.WriteLine(range);
+            bool isResume =range.EXIsNullOrEmptyOrWhiteSpace();
+            if (isResume==false) //断点续传请求
+            {
+                Console.WriteLine(range);
+                //格式bytes=9216-
+                startPos = long.Parse(range.Split('=')[1].Split('-')[0]);
+                httpListener.Response.StatusCode = 206;
+                httpListener.Response.ContentLength64 = fs.Length - startPos;
+                fs.Position = startPos; //设置传送的起始位置
+            }
+            else
+            {
+                httpListener.Response.ContentLength64 = fs.Length;
+            }
             httpListener.Response.ContentType = "application/octet-stream";
             httpListener.Response.AddHeader("Content-Disposition", $@"attachment;filename={file.Name}");
-
 
             CopyStream(fs, httpListener.Response.OutputStream); //文件传输
             httpListener.Response.OutputStream.Close();

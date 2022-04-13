@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
     <ReactorProject>"C:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ReaLTaiizor" Version="3.7.8.6" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TXQ.Utils\TXQ.Utils.csproj" />
   </ItemGroup>

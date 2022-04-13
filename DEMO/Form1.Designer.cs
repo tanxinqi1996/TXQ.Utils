@@ -28,43 +28,55 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tPagerControl1 = new TXQ.Utils.Controls.TPagerControl();
+            this.lostButton1 = new ReaLTaiizor.Controls.LostButton();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // tPagerControl1
+            // lostButton1
             // 
-            this.tPagerControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tPagerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tPagerControl1.Location = new System.Drawing.Point(0, 0);
-            this.tPagerControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tPagerControl1.Name = "tPagerControl1";
-            this.tPagerControl1.PageCount = 0;
-            this.tPagerControl1.PageIndex = 1;
-            this.tPagerControl1.PageSize = 100;
-            this.tPagerControl1.RecordCount = 0;
-            this.tPagerControl1.ShowExport = true;
-            this.tPagerControl1.ShowTaskBar = true;
-            this.tPagerControl1.Size = new System.Drawing.Size(1031, 936);
-            this.tPagerControl1.TabIndex = 0;
+            this.lostButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.lostButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lostButton1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lostButton1.ForeColor = System.Drawing.Color.White;
+            this.lostButton1.HoverColor = System.Drawing.Color.DodgerBlue;
+            this.lostButton1.Image = null;
+            this.lostButton1.Location = new System.Drawing.Point(418, 205);
+            this.lostButton1.Name = "lostButton1";
+            this.lostButton1.Size = new System.Drawing.Size(120, 40);
+            this.lostButton1.TabIndex = 0;
+            this.lostButton1.Text = "lostButton1";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(566, 286);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1031, 936);
-            this.Controls.Add(this.tPagerControl1);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.lostButton1);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximumSize = new System.Drawing.Size(1920, 1032);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GE";
-            this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.TransparencyKey = System.Drawing.Color.Fuchsia;
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private TXQ.Utils.Controls.TPagerControl tPagerControl1;
+        private ReaLTaiizor.Controls.LostButton lostButton1;
+        private System.Windows.Forms.Button button1;
     }
 }
 
