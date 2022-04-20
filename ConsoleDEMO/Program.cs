@@ -1,25 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TXQ.Utils.Tool;
-
-namespace ConsoleDEMO
+﻿
+public class Program
 {
-    internal class Program
+    public static void Main()
     {
-        static void Main(string[] args)
-        {
-            TXQ.Utils.Tool.LOG.LogLevel = LogLevel.ALL;
-            TXQ.Utils.P2P.Client.Workdir = "D:\\11111\\";
-            while (true)
-            {
-                System.Threading.Thread.Sleep(1000);
-                LOG.INFO("+");
+        var DATA = TXQ.Utils.WinAPI.SmartCtl.GetAllSmartInfos();
+        System.Console.Read();
 
-            }
-        }
     }
 }

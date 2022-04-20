@@ -217,7 +217,30 @@ namespace TXQ.Utils.Tool
 
         }
 
+        /// <summary>
+        /// 运行CMD命令并获取输出
+        /// </summary>
+        /// <param name="Cmd">CMD命令</param>
+        /// <returns>输出</returns>
+        public static string RunExeGetStdout(string exe,string args)
+        {
 
+
+
+            using var proc = new Process();
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.FileName = exe;
+            proc.StartInfo.Arguments = args;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.RedirectStandardInput = true;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.Start();
+            string outStr = proc.StandardOutput.ReadToEnd();
+            proc.Close();
+            return outStr;
+
+        }
         /// <summary>
         /// 调用C System函数，在控制台中执行cli命令。
         /// </summary>
