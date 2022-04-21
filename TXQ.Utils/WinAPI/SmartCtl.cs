@@ -51,14 +51,27 @@ namespace TXQ.Utils.WinAPI
             List<Model.SmartInfo> smartInfos = new List<Model.SmartInfo>();
             foreach (var item in GetAllDisks())
             {
-                var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
-                var json = JObject.Parse(str);
-                var smartInfo = new Model.SmartInfo();
-                smartInfo.PowerCycleCount = (int)json.SelectToken("power_cycle_count");
-                smartInfo.PowerOnHours = (int)json.SelectToken("power_on_time").SelectToken("hours");
-                smartInfo.ModelName = (string)json.SelectToken("model_name");
-                smartInfo.Protocol= (string)(json.SelectToken("device").SelectToken("protocol"));
-                smartInfos.Add(smartInfo);
+                string reading = null;
+                try
+                {
+                    var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
+                    reading = "json";
+                    var json = JObject.Parse(str);
+                    var smartInfo = new Model.SmartInfo();
+                    reading = "power_cycle_count";
+                    smartInfo.PowerCycleCount = (int)json.SelectToken("power_cycle_count");
+                    reading = "power_on_time";
+                    smartInfo.PowerOnHours = (int)json.SelectToken("power_on_time").SelectToken("hours");
+                    reading = "model_name";
+                    smartInfo.ModelName = (string)json.SelectToken("model_name");
+                    smartInfos.Add(smartInfo);
+                  
+                }
+                catch (Exception ex)
+                {
+                    Tool.LOG.ERROR($"Reading {reading} Fail\r\n{ex.Message}");
+                    continue;
+                }
             }
             return smartInfos;
         }
