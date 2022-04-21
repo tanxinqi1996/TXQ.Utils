@@ -465,6 +465,9 @@ namespace TXQ.Utils.Controls
             bt.Name = e.Column.Name;
             bt.Text = e.Column.HeaderText;
 
+            e.Column.Visible = ExIni.Read(this.FindForm().GetType().FullName, $"{ this.Name}.{ bt.Name}", true);
+
+
             bt.Checked = e.Column.Visible;
             ListHeader.DropDownItems.Add(bt);
             bt.Click += Bt_Click;
@@ -496,6 +499,7 @@ namespace TXQ.Utils.Controls
             var b = (sender as ToolStripMenuItem);
             b.Checked = !b.Checked;
             dataGridView1.Columns[b.Name].Visible = b.Checked;
+            ExIni.Write(this.FindForm().GetType().FullName, $"{ this.Name}.{ b.Name}", b.Checked);
         }
 
 
