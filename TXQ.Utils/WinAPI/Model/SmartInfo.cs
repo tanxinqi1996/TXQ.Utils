@@ -11,8 +11,9 @@ namespace TXQ.Utils.WinAPI.Model
         public string ModelName { get; set; }
         public int PowerOnHours { get; set; }
         public int PowerCycleCount { get; set; }
+        public string Protocol { get; set; }
 
     }
 
-   
+
 }

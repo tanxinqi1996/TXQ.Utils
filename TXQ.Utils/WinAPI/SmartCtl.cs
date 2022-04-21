@@ -28,14 +28,22 @@ namespace TXQ.Utils.WinAPI
         private static List<string> GetAllDisks()
         {
             List<string> list = new List<string>();
-            var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", "--scan -j");
-            var properties = JObject.Parse(str);
-            properties.SelectToken("devices").ToArray();
-            foreach (var item in properties.SelectToken("devices").ToArray())
+            try
             {
-                list.Add(item["name"].ToString());
+                var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", "--scan -j");
+                var properties = JObject.Parse(str);
+                properties.SelectToken("devices").ToArray();
+                foreach (var item in properties.SelectToken("devices").ToArray())
+                {
+                    list.Add(item["name"].ToString());
+                }
+                return list;
             }
-            return list;
+            catch (Exception ex)
+            {
+                TXQ.Utils.Tool.LOG.ERROR(ex.Message);
+                return list;
+            }
         }
 
         public static List<Model.SmartInfo> GetAllSmartInfos()
@@ -49,6 +57,7 @@ namespace TXQ.Utils.WinAPI
                 smartInfo.PowerCycleCount = (int)json.SelectToken("power_cycle_count");
                 smartInfo.PowerOnHours = (int)json.SelectToken("power_on_time").SelectToken("hours");
                 smartInfo.ModelName = (string)json.SelectToken("model_name");
+                smartInfo.Protocol= (string)(json.SelectToken("device").SelectToken("protocol"));
                 smartInfos.Add(smartInfo);
             }
             return smartInfos;
