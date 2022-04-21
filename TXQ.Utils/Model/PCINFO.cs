@@ -25,7 +25,6 @@ namespace TXQ.Utils.Model
             InitCPUInfo();
             InitDiskInfo();
             InitDVDInfo();
-            InitMonitorInfo();
             InitBaseboardInfo();
             InitSystemInfo();
             InitNetWorkInfo();
@@ -34,7 +33,7 @@ namespace TXQ.Utils.Model
             InitBiosInfo();
         }
         public List<string> DVD;
-        public List<MonitorInfo> Monitor;
+        public List<MonitorInfo> Monitor => InitMonitorInfo();
         public BaseboardInfo Baseboard;
         public SystemInfo System;
         public List<NetWorkInfo> NetWork;
@@ -55,7 +54,7 @@ namespace TXQ.Utils.Model
             }
             this.DVD = DVD;
         }
-        private void InitMonitorInfo()
+        private static List<MonitorInfo> InitMonitorInfo()
         {
             List<MonitorInfo> Class = new List<MonitorInfo>();
             foreach (Screen item in Screen.AllScreens)
@@ -69,7 +68,7 @@ namespace TXQ.Utils.Model
                 screen.Width = (int)(item.Bounds.Width * screen.Scale);
                 Class.Add(screen);
             }
-            Monitor = Class;
+            return Class;
         }
         private void InitBaseboardInfo()
         {
