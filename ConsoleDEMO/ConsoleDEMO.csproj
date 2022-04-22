@@ -7,7 +7,7 @@
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
     <ReactorProject>"C:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="5.7.0">
@@ -21,10 +21,7 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="C:\Source\OneDrive\开发\加密配置.nrproj" />
+      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="0" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="C:\Source\OneDrive\开发\加密配置.nrproj" />
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="ReactorCall" AfterTargets="Compile">
-    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
-  </Target>
 </Project>
