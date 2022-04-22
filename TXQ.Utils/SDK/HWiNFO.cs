@@ -11,29 +11,26 @@ namespace TXQ.Utils.SDK
 {
     public static class HWiNFO
     {
+        static HWiNFO()
+        {
+            Init();
+        }
         public static void Init()
         {
-            try
-            {
-                mmf = MemoryMappedFile.OpenExisting("Global\\HWiNFO_SENS_SM2", MemoryMappedFileRights.Read);
-                accessor = mmf.CreateViewAccessor(0L, (long)Marshal.SizeOf(typeof(HWiNFO.HWiNFO_MEMORY)), MemoryMappedFileAccess.Read);
-                accessor.Read(0L, out HWiNFOMemory);
-                numReadingElements = HWiNFOMemory.dwNumReadingElements;
-                offsetReadingSection = HWiNFOMemory.dwOffsetOfReadingSection;
-                sizeReadingSection = HWiNFOMemory.dwSizeOfReadingElement;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occured while opening the HWiNFO shared memory! - " + ex.Message);
-            }
-            var list = new List<HWiNFOResult>();
+            MMF = MemoryMappedFile.OpenExisting(@"Global\HWiNFO_SENS_SM2", MemoryMappedFileRights.Read);
+            accessor = MMF.CreateViewAccessor(0L, Marshal.SizeOf(typeof(HWiNFO_MEMORY)), MemoryMappedFileAccess.Read);
+            accessor.Read(0L, out HWiNFOMemory);
+            numReadingElements = HWiNFOMemory.dwNumReadingElements;
+            offsetReadingSection = HWiNFOMemory.dwOffsetOfReadingSection;
+            sizeReadingSection = HWiNFOMemory.dwSizeOfReadingElement;
+            var list = new List<SensorInfo>();
             for (uint num = 0U; num < numReadingElements; num += 1U)
             {
-                using MemoryMappedViewStream memoryMappedViewStream = mmf.CreateViewStream(offsetReadingSection + num * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
+                using MemoryMappedViewStream memoryMappedViewStream = MMF.CreateViewStream(offsetReadingSection + num * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
                 byte[] array = new byte[sizeReadingSection];
                 memoryMappedViewStream.Read(array, 0, (int)sizeReadingSection);
                 GCHandle gchandle = GCHandle.Alloc(array, GCHandleType.Pinned);
-                HWiNFOResult Result = (HWiNFOResult)Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(HWiNFOResult));
+                SensorInfo Result = (SensorInfo)Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(SensorInfo));
                 Result.Index = num;
                 list.Add(Result);
                 gchandle.Free();
@@ -43,15 +40,15 @@ namespace TXQ.Utils.SDK
 
         public static void Close()
         {
-            if (mmf != null)
+            if (MMF != null)
             {
-                mmf.Dispose();
+                MMF.Dispose();
             }
         }
 
-        public static IEnumerable<HWiNFOResult> AllSensors;
+        public static IEnumerable<SensorInfo> AllSensors;
 
-        private static MemoryMappedFile mmf;
+        private static MemoryMappedFile MMF;
 
         private static MemoryMappedViewAccessor accessor;
 
@@ -63,55 +60,88 @@ namespace TXQ.Utils.SDK
 
         private static HWiNFO_MEMORY HWiNFOMemory;
 
+
+        /// <summary>
+        /// 传感器类型
+        /// </summary>
         public enum SensorType
         {
-            SENSOR_TYPE_NONE = 0,
-            SENSOR_TYPE_TEMP = 1,
-            SENSOR_TYPE_VOLT = 2,
-            SENSOR_TYPE_FAN = 3,
-            SENSOR_TYPE_CURRENT = 4,
-            SENSOR_TYPE_POWER = 5,
-            SENSOR_TYPE_CLOCK = 6,
-            SENSOR_TYPE_USAGE = 7,
-            SENSOR_TYPE_OTHER = 8
+            None = 0,
+            Temperature = 1,
+            Voltage = 2,
+            Fan = 3,
+            Currten = 4,
+            Power = 5,
+            Clock = 6,
+            Usage = 7,
+            Other = 8
         }
 
+
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct HWiNFOResult
+        public struct SensorInfo
         {
-            public SensorType SensorType;
+            public readonly SensorType SensorType;
 
-            private uint SensorIndex;
+            private readonly uint SensorIndex;
 
-            private uint dwReadingID;
+            private readonly uint dwReadingID;
 
+
+            /// <summary>
+            /// 型号
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string Model;
+            public readonly string Model;
 
+
+            /// <summary>
+            /// 
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            private string Model_LocalLanguange;
+            public readonly string Model_LocalLanguange;
 
+            /// <summary>
+            /// 单位
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-            private string szUnit;
+            public readonly string Unit;
 
+            /// <summary>
+            /// 值
+            /// </summary>
             public double Value;
 
+            /// <summary>
+            /// 最小值
+            /// </summary>
             public double ValueMin;
 
+            /// <summary>
+            /// 最大值
+            /// </summary>
             public double ValueMax;
 
+            /// <summary>
+            /// 平均值
+            /// </summary>
             public double ValueAvg;
 
-            internal uint Index { get; set; }
 
+
+            internal uint Index;
+
+            /// <summary>
+            /// 重新读取
+            /// </summary>
             public void ReInit()
             {
-
-                using MemoryMappedViewStream memoryMappedViewStream = mmf.CreateViewStream(offsetReadingSection + Index * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
+                using var MemStr = MMF.CreateViewStream(offsetReadingSection + Index * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
                 byte[] array = new byte[sizeReadingSection];
-                memoryMappedViewStream.Read(array, 0, (int)sizeReadingSection);
+                MemStr.Read(array, 0, (int)sizeReadingSection);
                 GCHandle gchandle = GCHandle.Alloc(array, GCHandleType.Pinned);
-                HWiNFOResult Result = (HWiNFOResult)Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(HWiNFOResult));
+                SensorInfo Result = (SensorInfo)Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(SensorInfo));
                 Value = Result.Value;
                 ValueMin = Result.ValueMin;
                 ValueMax = Result.ValueMax;
