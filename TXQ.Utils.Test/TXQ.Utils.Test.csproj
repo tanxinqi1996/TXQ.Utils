@@ -5,7 +5,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
-    <ReactorProject>"C:\Source\OneDrive\开发\加密配置.nrproj"</ReactorProject>
+    <ReactorProject>""</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
@@ -21,10 +21,10 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="C:\Source\OneDrive\开发\加密配置.nrproj" />
+      <UserProperties Reactor_Commands="-antitamp 1 -hide_calls 1 -control_flow_obfuscation 1 -flow_level 9 -virtualization 1 -necrobit 1 -mapping_file 1 -quiet" Reactor_Configuration="Release" Reactor_Deploy="1" Reactor_Enabled="1" Reactor_Output="" Reactor_Project="" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">
-    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
+    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -antitamp 1 -hide_calls 1 -control_flow_obfuscation 1 -flow_level 9 -virtualization 1 -necrobit 1 -mapping_file 1 -quiet" Condition="'$(ConfigurationName)' == 'Release' " />
   </Target>
 </Project>
