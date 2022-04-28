@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Management;
 
 namespace TXQ.Utils.WinAPI
@@ -12,7 +9,7 @@ namespace TXQ.Utils.WinAPI
         public static List<ManagementObject> SearchWMI(string SELECTSTR, string NAMESPACE = "root\\CIMV2")
         {
             List<ManagementObject> List = new List<ManagementObject>();
-            var DATA = new ManagementObjectSearcher(NAMESPACE, SELECTSTR).Get();
+            ManagementObjectCollection DATA = new ManagementObjectSearcher(NAMESPACE, SELECTSTR).Get();
             foreach (ManagementObject queryObj in DATA)
             {
                 List.Add(queryObj);
@@ -22,35 +19,37 @@ namespace TXQ.Utils.WinAPI
         public static List<WinAPI.PnPEntity> Win32_PnPEntity()
         {
             List<WinAPI.PnPEntity> list = new List<PnPEntity>();
-            foreach (var item in Tool.PC.SearchWMI("SELECT * FROM Win32_PnPEntity"))
+            foreach (ManagementObject item in Tool.PC.SearchWMI("SELECT * FROM Win32_PnPEntity"))
             {
-                var DATA = new PnPEntity();
-                DATA.Service = Convert.ToString(item["Service"]);
-                DATA.Availability = Convert.ToUInt16(item["Availability"]);
-                DATA.SystemName = Convert.ToString(item["SystemName"]);
-                DATA.Status = Convert.ToString(item["Status"]);
-                DATA.Manufacturer = Convert.ToString(item["Manufacturer"]);
-                DATA.StatusInfo = Convert.ToUInt16(item["StatusInfo"]);
-                DATA.SystemCreationClassName = Convert.ToString(item["SystemCreationClassName"]);
-                DATA.PowerManagementSupported = Convert.ToBoolean(item["PowerManagementSupported"]);
-                DATA.Caption = Convert.ToString(item["Caption"]);
-                DATA.ClassGuid = Convert.ToString(item["ClassGuid"]);
-                DATA.CreationClassName = Convert.ToString(item["CreationClassName"]);
-                DATA.DeviceID = Convert.ToString(item["DeviceID"]);
-                DATA.Description = Convert.ToString(item["Description"]);
-                DATA.ErrorCleared = Convert.ToBoolean(item["ErrorCleared"]);
-                DATA.ErrorDescription = Convert.ToString(item["ErrorDescription"]);
-                DATA.InstallDate = Convert.ToDateTime(item["InstallDate"]);
-                DATA.LastErrorCode = Convert.ToBoolean(item["LastErrorCode"]);
-                DATA.Name = Convert.ToString(item["Name"]);
-                DATA.PNPClass = Convert.ToString(item["PNPClass"]);
-                DATA.PNPDeviceID = Convert.ToString(item["PNPDeviceID"]);
-                DATA.Present = Convert.ToBoolean(item["Present"]);
-                DATA.HardwareID = (string[])item["HardwareID"];
-                DATA.PowerManagementCapabilities = (ushort[])item["PowerManagementCapabilities"];
-                DATA.ConfigManagerErrorCode = (uint)item["ConfigManagerErrorCode"];
-                DATA.CompatibleID = (string[])item["CompatibleID"];
-                DATA.ConfigManagerUserConfig = Convert.ToBoolean(item["ConfigManagerUserConfig"]);
+                PnPEntity DATA = new PnPEntity
+                {
+                    Service = Convert.ToString(item["Service"]),
+                    Availability = Convert.ToUInt16(item["Availability"]),
+                    SystemName = Convert.ToString(item["SystemName"]),
+                    Status = Convert.ToString(item["Status"]),
+                    Manufacturer = Convert.ToString(item["Manufacturer"]),
+                    StatusInfo = Convert.ToUInt16(item["StatusInfo"]),
+                    SystemCreationClassName = Convert.ToString(item["SystemCreationClassName"]),
+                    PowerManagementSupported = Convert.ToBoolean(item["PowerManagementSupported"]),
+                    Caption = Convert.ToString(item["Caption"]),
+                    ClassGuid = Convert.ToString(item["ClassGuid"]),
+                    CreationClassName = Convert.ToString(item["CreationClassName"]),
+                    DeviceID = Convert.ToString(item["DeviceID"]),
+                    Description = Convert.ToString(item["Description"]),
+                    ErrorCleared = Convert.ToBoolean(item["ErrorCleared"]),
+                    ErrorDescription = Convert.ToString(item["ErrorDescription"]),
+                    InstallDate = Convert.ToDateTime(item["InstallDate"]),
+                    LastErrorCode = Convert.ToBoolean(item["LastErrorCode"]),
+                    Name = Convert.ToString(item["Name"]),
+                    PNPClass = Convert.ToString(item["PNPClass"]),
+                    PNPDeviceID = Convert.ToString(item["PNPDeviceID"]),
+                    Present = Convert.ToBoolean(item["Present"]),
+                    HardwareID = (string[])item["HardwareID"],
+                    PowerManagementCapabilities = (ushort[])item["PowerManagementCapabilities"],
+                    ConfigManagerErrorCode = (uint)item["ConfigManagerErrorCode"],
+                    CompatibleID = (string[])item["CompatibleID"],
+                    ConfigManagerUserConfig = Convert.ToBoolean(item["ConfigManagerUserConfig"])
+                };
                 list.Add(DATA);
             }
 

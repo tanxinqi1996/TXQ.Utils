@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -33,7 +29,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="STR"></param>
         /// <param name="color"></param>
-        public static void WriteLine(string STR, ConsoleColor color=ConsoleColor.White)
+        public static void WriteLine(string STR, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(STR);

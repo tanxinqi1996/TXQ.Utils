@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using TXQ.Utils.Tool;
@@ -243,7 +242,7 @@ namespace TXQ.Utils.Controls
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 134);
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -461,9 +460,11 @@ namespace TXQ.Utils.Controls
         /// <param name="e"></param>
         private void dataGridView1_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
-            var bt = new ToolStripMenuItem();
-            bt.Name = e.Column.Name;
-            bt.Text = e.Column.HeaderText;
+            ToolStripMenuItem bt = new ToolStripMenuItem
+            {
+                Name = e.Column.Name,
+                Text = e.Column.HeaderText
+            };
 
             e.Column.Visible = ExIni.Read(this.FindForm().GetType().FullName, $"{ this.Name}.{ bt.Name}", true);
 
@@ -496,7 +497,7 @@ namespace TXQ.Utils.Controls
         /// <param name="e"></param>
         private void Bt_Click(object sender, EventArgs e)
         {
-            var b = (sender as ToolStripMenuItem);
+            ToolStripMenuItem b = (sender as ToolStripMenuItem);
             b.Checked = !b.Checked;
             dataGridView1.Columns[b.Name].Visible = b.Checked;
             ExIni.Write(this.FindForm().GetType().FullName, $"{ this.Name}.{ b.Name}", b.Checked);

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -21,26 +17,33 @@ namespace TXQ.Utils.Tool
         /// <param name="data">数据</param>
         /// <param name="pass">密码</param>
         /// <returns></returns>
-        public static Byte[] Encrypt(Byte[] data, Byte[] pass)
+        public static byte[] Encrypt(byte[] data, byte[] pass)
         {
-            if (data == null || data.Length == 0) return Array.Empty<Byte>();
-            if (pass == null || pass.Length == 0) return data;
+            if (data == null || data.Length == 0)
+            {
+                return Array.Empty<byte>();
+            }
 
-            var output = new Byte[data.Length];
-            var i = 0;
-            var j = 0;
-            var box = GetKey(pass, 256);
+            if (pass == null || pass.Length == 0)
+            {
+                return data;
+            }
+
+            byte[] output = new byte[data.Length];
+            int i = 0;
+            int j = 0;
+            byte[] box = GetKey(pass, 256);
             // 加密  
-            for (var k = 0; k < data.Length; k++)
+            for (int k = 0; k < data.Length; k++)
             {
                 i = (i + 1) % box.Length;
                 j = (j + box[i]) % box.Length;
-                var temp = box[i];
+                byte temp = box[i];
                 box[i] = box[j];
                 box[j] = temp;
-                var a = data[k];
-                var b = box[(box[i] + box[j]) % box.Length];
-                output[k] = (Byte)(a ^ b);
+                byte a = data[k];
+                byte b = box[(box[i] + box[j]) % box.Length];
+                output[k] = (byte)(a ^ b);
             }
 
             return output;
@@ -50,18 +53,18 @@ namespace TXQ.Utils.Tool
         /// <param name="pass">密码</param>  
         /// <param name="len">密码箱长度</param>  
         /// <returns>打乱后的密码</returns>  
-        private static Byte[] GetKey(Byte[] pass, Int32 len)
+        private static byte[] GetKey(byte[] pass, int len)
         {
-            var box = new Byte[len];
-            for (var i = 0; i < len; i++)
+            byte[] box = new byte[len];
+            for (int i = 0; i < len; i++)
             {
-                box[i] = (Byte)i;
+                box[i] = (byte)i;
             }
-            var j = 0;
-            for (var i = 0; i < len; i++)
+            int j = 0;
+            for (int i = 0; i < len; i++)
             {
                 j = (j + box[i] + pass[i % pass.Length]) % len;
-                var temp = box[i];
+                byte temp = box[i];
                 box[i] = box[j];
                 box[j] = temp;
             }

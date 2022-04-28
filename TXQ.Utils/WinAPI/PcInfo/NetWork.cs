@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.WinAPI.PcInfo
 {
@@ -15,12 +12,12 @@ namespace TXQ.Utils.WinAPI.PcInfo
             {
                 List<Model.Win32_NetworkAdapterConfiguration> list = new List<Model.Win32_NetworkAdapterConfiguration>();
 
-                foreach (var item in WinAPI.Wmic.SearchWMI("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE MACAddress!= NULL"))
+                foreach (System.Management.ManagementObject item in WinAPI.Wmic.SearchWMI("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE MACAddress!= NULL"))
                 {
 
 
 
-                    var cfg = new Model.Win32_NetworkAdapterConfiguration
+                    Model.Win32_NetworkAdapterConfiguration cfg = new Model.Win32_NetworkAdapterConfiguration
                     {
                         MacAdress = Convert.ToString(item["MACAddress"]),
                         Caption = Convert.ToString(item["Caption"]),

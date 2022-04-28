@@ -87,14 +87,8 @@ namespace TXQ.Utils.Controls
         /// </summary>
         public bool AutoSave
         {
-            get
-            {
-                return _AutoSave;
-            }
-            set
-            {
-                _AutoSave = value;
-            }
+            get => _AutoSave;
+            set => _AutoSave = value;
         }
     }
 }

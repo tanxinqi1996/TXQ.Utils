@@ -15,7 +15,7 @@ namespace TXQ.Utils.Tool
         /// <summary>
         /// 默认配置文件路径
         /// </summary>
-        public static string ConfigFile ;
+        public static string ConfigFile;
 
         /// <summary>
         /// 读取INI文件值
@@ -33,7 +33,7 @@ namespace TXQ.Utils.Tool
             string R = sb.ToString();
             if (save)
             {
-                Write(section, key, R.ToString());
+                Write(section, key, R);
             }
             return R;
         }
@@ -54,12 +54,12 @@ namespace TXQ.Utils.Tool
             GetPrivateProfileString(section, key, def.ToString("yyyy-MM-dd HH:mm:ss"), sb, 1024, path ?? ConfigFile);
             try
             {
-                int R = Convert.ToInt32(sb.ToString());
+                var R = Convert.ToDateTime(sb.ToString());
                 if (save)
                 {
-                    Write(section, key, R.ToString());
+                    Write(section, key, R);
                 }
-                return Convert.ToDateTime(R);
+                return R;
             }
             catch
             {
@@ -110,12 +110,12 @@ namespace TXQ.Utils.Tool
             GetPrivateProfileString(section, key, def.ToString(), sb, 1024, path ?? ConfigFile);
             try
             {
-                int R = Convert.ToInt32(sb.ToString());
+                var R = Convert.ToBoolean(sb.ToString());
                 if (save)
                 {
-                    Write(section, key, R.ToString());
+                    Write(section, key, R);
                 }
-                return R == 1;
+                return R;
             }
             catch
             {
@@ -138,7 +138,7 @@ namespace TXQ.Utils.Tool
             GetPrivateProfileString(section, key, def.ToString(), sb, 1024, path ?? ConfigFile);
             try
             {
-                var R = Convert.ToDecimal(sb.ToString());
+                decimal R = Convert.ToDecimal(sb.ToString());
                 if (save)
                 {
                     Write(section, key, R.ToString());
@@ -211,14 +211,7 @@ namespace TXQ.Utils.Tool
         /// <returns>成功或失败</returns>
         public static int Write(string section, string key, bool value, string path = null)
         {
-            if (value)
-            {
-                return Write(section, key, 1, path ?? ConfigFile);
-            }
-            else
-            {
-                return Write(section, key, 0, path ?? ConfigFile);
-            }
+            return Write(section, key, value.ToString(), path ?? ConfigFile);
         }
 
 

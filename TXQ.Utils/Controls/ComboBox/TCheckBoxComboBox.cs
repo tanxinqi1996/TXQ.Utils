@@ -29,8 +29,8 @@ namespace TXQ.Utils.Controls
         public TCheckBoxComboBox()
             : base()
         {
-      
-            InitializeComponent();   
+
+            InitializeComponent();
             this.CheckBoxCheckedChanged += new System.EventHandler(this.CheckBoxComboBox1_CheckBoxCheckedChanged);
             _CheckBoxProperties = new CheckBoxProperties();
             _CheckBoxProperties.PropertyChanged += new EventHandler(CheckBoxProperties_PropertyChanged);
@@ -190,10 +190,7 @@ namespace TXQ.Utils.Controls
         /// </returns>
         [Browsable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public new ObjectCollection Items
-        {
-            get { return base.Items; }
-        }
+        public new ObjectCollection Items => base.Items;
 
         #endregion
 
@@ -412,7 +409,7 @@ namespace TXQ.Utils.Controls
 
         #endregion
 
-        public CheckBoxComboBoxItemList Items { get { return _Items; } }
+        public CheckBoxComboBoxItemList Items => _Items;
 
         #region RESIZE OVERRIDE REQUIRED BY THE POPUP CONTROL
 
@@ -461,7 +458,9 @@ namespace TXQ.Utils.Controls
                 CheckBoxComboBoxItem Item = _Items[Index];
                 if (!_CheckBoxComboBox.Items.Contains(Item.ComboBoxItem))
                 {
+#pragma warning disable CS0618 // “CheckBoxComboBoxItemList.Remove(CheckBoxComboBoxItem)”已过时:“Do not remove items from this list directly. Use the ComboBox items instead.”
                     _Items.Remove(Item);
+#pragma warning restore CS0618 // “CheckBoxComboBoxItemList.Remove(CheckBoxComboBoxItem)”已过时:“Do not remove items from this list directly. Use the ComboBox items instead.”
                     Item.Dispose();
                 }
             }
@@ -504,7 +503,9 @@ namespace TXQ.Utils.Controls
                     Item = new CheckBoxComboBoxItem(_CheckBoxComboBox, Object);
                     Item.ApplyProperties(_CheckBoxComboBox.CheckBoxProperties);
                 }
+#pragma warning disable CS0618 // “CheckBoxComboBoxItemList.Add(CheckBoxComboBoxItem)”已过时:“Do not add items to this list directly. Use the ComboBox items instead.”
                 NewList.Add(Item);
+#pragma warning restore CS0618 // “CheckBoxComboBoxItemList.Add(CheckBoxComboBoxItem)”已过时:“Do not add items to this list directly. Use the ComboBox items instead.”
                 Item.Dock = DockStyle.Top;
             }
             _Items.Clear();

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace TXQ.Utils.Tool
@@ -21,9 +17,15 @@ namespace TXQ.Utils.Tool
             foreach (XmlNode childNode in element.ChildNodes)
             {
                 PropertyInfo pi = objModel.GetType().GetProperty(childNode.Name);
-                if (pi == null) continue;
-                if (!String.IsNullOrEmpty(childNode.InnerXml.Trim()))
+                if (pi == null)
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(childNode.InnerXml.Trim()))
+                {
                     pi.SetValue(objModel, childNode.InnerXml, null);
+                }
             }
 
             return objModel;

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -63,10 +60,10 @@ namespace TXQ.Utils.Tool
         /// <returns>Base64字符串</returns>
         public static string EXGetBase64(string filename)
         {
-            var filestream = new FileStream(filename, FileMode.Open);
+            FileStream filestream = new FileStream(filename, FileMode.Open);
             byte[] bt = new byte[filestream.Length];
             filestream.Read(bt, 0, bt.Length);
-            var base64Str = Convert.ToBase64String(bt);
+            string base64Str = Convert.ToBase64String(bt);
             return base64Str;
         }
 
@@ -75,7 +72,7 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="Base64str"><Base64str/param>
         /// <param name="filename">文件路径</param>
-        public static void EXBase64ToFile(this string Base64str,string filename)
+        public static void EXBase64ToFile(this string Base64str, string filename)
         {
             byte[] b = Convert.FromBase64String(Base64str);
             File.WriteAllBytes(filename, b);

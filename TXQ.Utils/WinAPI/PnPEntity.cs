@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.WinAPI
 {
@@ -37,7 +33,7 @@ namespace TXQ.Utils.WinAPI
 
         public void Init()
         {
-            var item = Tool.PC.SearchWMI("SELECT * FROM Win32_PnPEntity")[0];
+            System.Management.ManagementObject item = Tool.PC.SearchWMI("SELECT * FROM Win32_PnPEntity")[0];
             Service = Convert.ToString(item["Service"]);
             Availability = Convert.ToUInt16(item["Availability"]);
             SystemName = Convert.ToString(item["SystemName"]);

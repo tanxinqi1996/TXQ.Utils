@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using TXQ.Utils.Tool;
 
@@ -24,7 +23,10 @@ namespace TXQ.Utils.P2P
             TellTrackerLimit = ExIni.Read("P2P", "TellTrackerLimit", 10, true);
             //获取IP
             Host = ExIni.Read("P2P", "ReportIP", Environment.UserDomainName, true);
-            if (Host == null) throw new Exception("没有找到可用的IP");
+            if (Host == null)
+            {
+                throw new Exception("没有找到可用的IP");
+            }
 
             //初始化HttpListener
             _httplistener = new HttpListener(); //创建监听实例
@@ -40,9 +42,9 @@ namespace TXQ.Utils.P2P
                    try
                    {
                        Directory.CreateDirectory(Workdir);
-                       var list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name);
-                       var url = $"{_tracker}api/peer?peer={Peer}&level={Level}";
-                       var res = HTTP.Post(url, list.EXToJSON()).Result;
+                       IEnumerable<string> list = new DirectoryInfo(Workdir).GetFiles().Select(O => O.Name);
+                       string url = $"{_tracker}api/peer?peer={Peer}&level={Level}";
+                       string res = HTTP.Post(url, list.EXToJSON()).Result;
                        if (res == "true")
                        {
                            LOG.DEBUG($"Tell Tracker Succecc WorkDir:{Workdir};Peer:{Peer};Level:{Level};File:{list.Count()}");
@@ -93,14 +95,14 @@ namespace TXQ.Utils.P2P
         {
             while (true)
             {
-                var request = _httplistener.GetContext(); //接受到新的请求
-                var watcher = Stopwatch.StartNew();
+                HttpListenerContext request = _httplistener.GetContext(); //接受到新的请求
+                Stopwatch watcher = Stopwatch.StartNew();
                 LOG.DEBUG($@"Request Start Path:{request.Request.RawUrl}");
                 Task.Run(new Action(() =>
                 {
                     try
                     {
-                        var path = Workdir + request.Request.RawUrl;
+                        string path = Workdir + request.Request.RawUrl;
                         if (request.Request.RawUrl == "/check")
                         {
                             request.HttpSendText("im ok", 200);
@@ -163,17 +165,17 @@ namespace TXQ.Utils.P2P
         }
         private static void HttpSendFile(this HttpListenerContext httpListener)
         {
-            var file = new FileInfo( Workdir + httpListener.Request.RawUrl);
+            FileInfo file = new FileInfo(Workdir + httpListener.Request.RawUrl);
 
-          //  httpListener.Response.AddHeader("Accept-Ranges", "bytes");//重要：续传必须  
+            //  httpListener.Response.AddHeader("Accept-Ranges", "bytes");//重要：续传必须  
 
-            using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            using FileStream fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 
             long startPos = 0;
             string range = httpListener.Response.Headers["Range"];
             Console.WriteLine(range);
-            bool isResume =range.EXIsNullOrEmptyOrWhiteSpace();
-            if (isResume==false) //断点续传请求
+            bool isResume = range.EXIsNullOrEmptyOrWhiteSpace();
+            if (isResume == false) //断点续传请求
             {
                 Console.WriteLine(range);
                 //格式bytes=9216-
@@ -207,18 +209,18 @@ namespace TXQ.Utils.P2P
 
         public static void GenerateDHT(string InputFile, string OutPutFilePath, int cutFileSize = 1024 * 1024 * 100)
         {
-            var fileInfo = new FileInfo(InputFile);
+            FileInfo fileInfo = new FileInfo(InputFile);
             LOG.INFO($"正在读取文件，耗时较长，请稍候，{fileInfo.Length / 1024 / 1024}MB");
             //文件流读取文件
-            var DHT = new DHT()
+            DHT DHT = new DHT()
             {
                 SubFiles = new Dictionary<int, string>(),
                 DateTime = DateTime.Now,
                 FileName = fileInfo.Name,
                 SHA = fileInfo.ExGetSha1()
             };
-            using var FileStream = new FileStream(fileInfo.FullName, FileMode.Open);
-            using var FileReader = new BinaryReader(FileStream);
+            using FileStream FileStream = new FileStream(fileInfo.FullName, FileMode.Open);
+            using BinaryReader FileReader = new BinaryReader(FileStream);
 
             byte[] cutBytes;
             //分割的文件个数
@@ -229,7 +231,7 @@ namespace TXQ.Utils.P2P
                 //分割后的文件流
                 cutBytes = FileReader.ReadBytes(cutFileSize);
                 //分割后的文件SHA1
-                var sha = cutBytes.EXGetSha1();
+                string sha = cutBytes.EXGetSha1();
                 //分割文件名
                 string cutFileName = Path.Combine(Workdir, sha);
                 //写入分割文件
@@ -252,7 +254,7 @@ namespace TXQ.Utils.P2P
                  if (File.Exists(combineFile))
                  {
                      LOG.INFO("文件已存在，正在读取校验SHA1，时间可能较长，请稍后");
-                     var SHA = new FileInfo(combineFile).ExGetSha1();
+                     string SHA = new FileInfo(combineFile).ExGetSha1();
                      if (SHA == file.SHA)
                      {
                          LOG.INFO($"{SHA}：校验成功");
@@ -264,14 +266,14 @@ namespace TXQ.Utils.P2P
                      }
                  }
                  LOG.INFO($"{file.SHA}:正在合并文件");
-                 using var CombineFS = File.OpenWrite(combineFile);
-                 using var CombineFW = new BinaryWriter(CombineFS);
+                 using FileStream CombineFS = File.OpenWrite(combineFile);
+                 using BinaryWriter CombineFW = new BinaryWriter(CombineFS);
 
-                 foreach (var item in file.SubFiles.OrderBy(o => o.Key))
+                 foreach (KeyValuePair<int, string> item in file.SubFiles.OrderBy(o => o.Key))
                  {
                      LOG.INFO($"{file.SHA}:正在合并文件 {item.Key + 1}/{file.SubFiles.Count}");
-                     using var fs = File.OpenRead($@"{Workdir}{item.Value}");
-                     using var fr = new BinaryReader(fs);
+                     using FileStream fs = File.OpenRead($@"{Workdir}{item.Value}");
+                     using BinaryReader fr = new BinaryReader(fs);
                      byte[] TempBytes = fr.ReadBytes((int)fs.Length);
                      //  if (item.Value == TempBytes.EXGetSha1())
                      //  {
@@ -283,7 +285,7 @@ namespace TXQ.Utils.P2P
                  CombineFS.Close();
                  CombineFW.Close();
                  LOG.INFO("正在读取校验SHA1，时间可能较长，请稍后");
-                 var SHA1 = new FileInfo(combineFile).ExGetSha1();
+                 string SHA1 = new FileInfo(combineFile).ExGetSha1();
                  if (SHA1 == file.SHA)
                  {
                      LOG.INFO($"{SHA1}：校验成功");
@@ -301,7 +303,7 @@ namespace TXQ.Utils.P2P
         private static async Task<bool> HttpDownload(string url, string path, string sha1, long speedlimit = 1024 * 1000 * 100)
         {
             Directory.CreateDirectory(TempDir);
-            var tempFile = TempDir + "\\" + Guid.NewGuid().ToString();
+            string tempFile = TempDir + "\\" + Guid.NewGuid().ToString();
             if (File.Exists(tempFile))
             {
                 File.Delete(tempFile);
@@ -311,14 +313,14 @@ namespace TXQ.Utils.P2P
             try
             {
 
-                var fs = new FileStream(tempFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                var request = WebRequest.Create(url) as HttpWebRequest;
-                var response = request.GetResponse() as HttpWebResponse;
-                var responseStream = response.GetResponseStream();
-                var bArr = new byte[1024 * 1024];
+                FileStream fs = new FileStream(tempFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                Stream responseStream = response.GetResponseStream();
+                byte[] bArr = new byte[1024 * 1024];
                 int size = responseStream.Read(bArr, 0, bArr.Length);
                 //创建计时器
-                var watcher = new Stopwatch();
+                Stopwatch watcher = new Stopwatch();
                 int lenth = 0;
 
                 watcher.Start();
@@ -338,7 +340,7 @@ namespace TXQ.Utils.P2P
                 }
                 fs.Close();
                 responseStream.Close();
-                var hash = new FileInfo(tempFile).ExGetSha1();
+                string hash = new FileInfo(tempFile).ExGetSha1();
                 if (sha1 != hash)
                 {
                     throw new Exception($"HASH校验失败:{sha1};{hash}");
@@ -361,8 +363,8 @@ namespace TXQ.Utils.P2P
         public static async Task<string> DownLoadDHTFile(DHT DHT, string path)
         {
 
-            var tasks = new List<Task>();
-            foreach (var ITEM in DHT.SubFiles)
+            List<Task> tasks = new List<Task>();
+            foreach (KeyValuePair<int, string> ITEM in DHT.SubFiles)
             {
                 string filename = Workdir + ITEM.Value;
                 if (File.Exists(filename))
@@ -378,7 +380,7 @@ namespace TXQ.Utils.P2P
             Stopwatch watch = Stopwatch.StartNew();
             while (tasks.Any(O => O.IsCompleted == false))
             {
-                var waittorun = tasks.Where(O => O.Status == TaskStatus.Created).ToList();
+                List<Task> waittorun = tasks.Where(O => O.Status == TaskStatus.Created).ToList();
                 int running = tasks.Where(O => (O.Status == TaskStatus.Running)).Count();
                 int IsCompleted = tasks.Where(O => O.IsCompleted).Count();
                 if (waittorun.Count > 0 && running < Connection)
@@ -413,14 +415,14 @@ namespace TXQ.Utils.P2P
                 try
                 {
 
-                    var Peers = await HTTP.Get(trackerurl);
+                    string Peers = await HTTP.Get(trackerurl);
                     if (Peers == null)
                     {
                         throw new Exception($"Tracker Report Error;Request:{trackerurl};Reslt:{Peers}");
                     }
-                    var p = Peers.EXJsonToType<List<string>>();
+                    List<string> p = Peers.EXJsonToType<List<string>>();
                     LOG.DEBUG($"{sha}：Found Peer {Peers}");
-                    foreach (var ITEM in Peers.EXJsonToType<List<string>>())
+                    foreach (string ITEM in Peers.EXJsonToType<List<string>>())
                     {
                         peerurl = ITEM + sha;
                         LOG.INFO($"{sha}: form {ITEM}");
@@ -432,7 +434,7 @@ namespace TXQ.Utils.P2P
                         {
                             throw new Exception("无法连接到Peer");
                         }
-                        var downloadok = HttpDownload(peerurl, Workdir + sha, sha, Speedlimit);
+                        Task<bool> downloadok = HttpDownload(peerurl, Workdir + sha, sha, Speedlimit);
                         if (downloadok.Wait(_downloadTimeout))
                         {
                             if (downloadok.Result == true)

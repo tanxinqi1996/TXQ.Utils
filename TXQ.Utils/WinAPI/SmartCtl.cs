@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.WinAPI
 {
@@ -20,7 +18,7 @@ namespace TXQ.Utils.WinAPI
                 {
                     System.IO.Directory.CreateDirectory(dir);
                 }
-                var FS = new FileStream(path, FileMode.CreateNew);
+                FileStream FS = new FileStream(path, FileMode.CreateNew);
                 FS.Write(TXQ.Utils.Properties.Resources.smartctl, 0, TXQ.Utils.Properties.Resources.smartctl.Length);
                 FS.Close();
             }
@@ -30,10 +28,10 @@ namespace TXQ.Utils.WinAPI
             List<string> list = new List<string>();
             try
             {
-                var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", "--scan -j");
-                var properties = JObject.Parse(str);
+                string str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", "--scan -j");
+                JObject properties = JObject.Parse(str);
                 properties.SelectToken("devices").ToArray();
-                foreach (var item in properties.SelectToken("devices").ToArray())
+                foreach (JToken item in properties.SelectToken("devices").ToArray())
                 {
                     list.Add(item["name"].ToString());
                 }
@@ -49,15 +47,15 @@ namespace TXQ.Utils.WinAPI
         public static List<Model.SmartInfo> GetAllSmartInfos()
         {
             List<Model.SmartInfo> smartInfos = new List<Model.SmartInfo>();
-            foreach (var item in GetAllDisks())
+            foreach (string item in GetAllDisks())
             {
                 string reading = null;
                 try
                 {
-                    var str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
+                    string str = Tool.CMD.RunExeGetStdout(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
                     reading = "json";
-                    var json = JObject.Parse(str);
-                    var smartInfo = new Model.SmartInfo();
+                    JObject json = JObject.Parse(str);
+                    Model.SmartInfo smartInfo = new Model.SmartInfo();
                     reading = "power_cycle_count";
                     smartInfo.PowerCycleCount = (int)json.SelectToken("power_cycle_count");
                     reading = "power_on_time";
@@ -65,7 +63,7 @@ namespace TXQ.Utils.WinAPI
                     reading = "model_name";
                     smartInfo.ModelName = (string)json.SelectToken("model_name");
                     smartInfos.Add(smartInfo);
-                  
+
                 }
                 catch (Exception ex)
                 {

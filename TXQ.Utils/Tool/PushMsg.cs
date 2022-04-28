@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TXQ.Utils.Tool
+﻿namespace TXQ.Utils.Tool
 {
     public static class PushMsg
     {

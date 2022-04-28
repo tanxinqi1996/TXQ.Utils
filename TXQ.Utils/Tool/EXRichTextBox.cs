@@ -14,7 +14,10 @@ namespace TXQ.Utils.Tool
                 rtb.SelectionColor = color;//设置文本颜色
                 rtb.AppendText(Text);//输出文本，换行
                 if (AddNewLine)
+                {
                     rtb.AppendText(Environment.NewLine);//换行
+                }
+
                 rtb.ScrollToEnd();
             }));
         }

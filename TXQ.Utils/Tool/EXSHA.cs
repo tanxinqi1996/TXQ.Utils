@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -28,8 +24,8 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha1(this byte[] input)
         {
-            var hash = SHA1.Create().ComputeHash(input);
-            var builder = new StringBuilder();
+            byte[] hash = SHA1.Create().ComputeHash(input);
+            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
@@ -40,10 +36,10 @@ namespace TXQ.Utils.Tool
 
         public static string ExGetSha1(this FileInfo file)
         {
-            using var fileStream = File.OpenRead(file.FullName);
-            var hash = SHA1.Create().ComputeHash(fileStream);
-            var builder = new StringBuilder();
-            for (var i = 0; i < hash.Length; i++)
+            using FileStream fileStream = File.OpenRead(file.FullName);
+            byte[] hash = SHA1.Create().ComputeHash(fileStream);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
             }
@@ -67,9 +63,9 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static string EXGetSha256(this byte[] input)
         {
-            var hash = SHA256.Create().ComputeHash(input);
-            var builder = new StringBuilder();
-            for (var i = 0; i < hash.Length; i++)
+            byte[] hash = SHA256.Create().ComputeHash(input);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
             }
@@ -78,10 +74,10 @@ namespace TXQ.Utils.Tool
 
         public static string ExGetSha256(this FileInfo file)
         {
-            using var fileStream = File.OpenRead(file.FullName);
-            var hash = SHA256.Create().ComputeHash(fileStream);
-            var builder = new StringBuilder();
-            for (var i = 0; i < hash.Length; i++)
+            using FileStream fileStream = File.OpenRead(file.FullName);
+            byte[] hash = SHA256.Create().ComputeHash(fileStream);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
             }

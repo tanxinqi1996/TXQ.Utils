@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using TXQ.Utils.Tool;
 
@@ -33,14 +32,8 @@ namespace TXQ.Utils.Controls.ConfigControl
         private bool _AutoSave = true;
         public bool AutoSave
         {
-            get
-            {
-                return _AutoSave;
-            }
-            set
-            {
-                _AutoSave = value;
-            }
+            get => _AutoSave;
+            set => _AutoSave = value;
         }
     }
 }

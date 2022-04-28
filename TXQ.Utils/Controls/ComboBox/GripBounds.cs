@@ -16,11 +16,7 @@ namespace TXQ.Utils.Controls
         }
 
         private Rectangle clientRectangle;
-        public Rectangle ClientRectangle
-        {
-            get { return clientRectangle; }
-            //set { clientRectangle = value; }
-        }
+        public Rectangle ClientRectangle => clientRectangle;
 
         public Rectangle Bottom
         {

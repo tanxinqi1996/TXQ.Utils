@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.IO;
-using System.Diagnostics;
-using Microsoft.Win32;
-using ICSharpCode.SharpZipLib.Zip;
 
 
 ///压缩、解压缩类
@@ -24,7 +18,7 @@ namespace TXQ.Utils.Tool
             string[] folders, filenames;
             ZipEntry entry = null;
             FileStream fs = null;
-            var crc = new ICSharpCode.SharpZipLib.Checksum.Crc32();
+            ICSharpCode.SharpZipLib.Checksum.Crc32 crc = new ICSharpCode.SharpZipLib.Checksum.Crc32();
             try
             {
                 entry = new ZipEntry(Path.Combine(ParentFolderName, Path.GetFileName(FolderToZip) + "/"));
@@ -36,9 +30,11 @@ namespace TXQ.Utils.Tool
                     fs = File.OpenRead(file);
                     byte[] buffer = new byte[fs.Length];
                     fs.Read(buffer, 0, buffer.Length);
-                    entry = new ZipEntry(Path.Combine(ParentFolderName, Path.GetFileName(FolderToZip) + "/" + Path.GetFileName(file)));
-                    entry.DateTime = DateTime.Now;
-                    entry.Size = fs.Length;
+                    entry = new ZipEntry(Path.Combine(ParentFolderName, Path.GetFileName(FolderToZip) + "/" + Path.GetFileName(file)))
+                    {
+                        DateTime = DateTime.Now,
+                        Size = fs.Length
+                    };
                     fs.Close();
                     crc.Reset();
                     crc.Update(buffer);
@@ -159,7 +155,7 @@ namespace TXQ.Utils.Tool
         /// <param name="FileToZip">待压缩的文件目录</param>
         /// <param name="ZipedFile">生成的目标文件</param>
         /// <param name="level">6</param>
-        public static bool Zip(String FileToZip, String ZipedFile, int level = 6)
+        public static bool Zip(string FileToZip, string ZipedFile, int level = 6)
         {
             if (Directory.Exists(FileToZip))
             {
@@ -199,7 +195,7 @@ namespace TXQ.Utils.Tool
                 s = new ZipInputStream(File.OpenRead(FileToUpZip));
                 while ((theEntry = s.GetNextEntry()) != null)
                 {
-                    if (theEntry.Name != String.Empty)
+                    if (theEntry.Name != string.Empty)
                     {
                         fileName = Path.Combine(ZipedFolder, theEntry.Name);
                         if (fileName.EndsWith("/") || fileName.EndsWith("\\"))

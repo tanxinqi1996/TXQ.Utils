@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TXQ.Utils.Tool;
 
@@ -31,8 +29,8 @@ namespace TXQ.Utils.WinAPI
             string dir = new FileInfo(InfPath).DirectoryName.Replace(Application.StartupPath + "\\", null);
             //;分割注释
             string Class = ExIni.Read("Version", "Class", "", false, InfPath).Split(';')[0].Trim();
-            var DRVINFO = DismApi.GetDriverInfo(DismApi.OpenOfflineSession(DismApi.DISM_ONLINE_IMAGE), InfPath);
-            foreach (var ITEM in DRVINFO)
+            DismDriverCollection DRVINFO = DismApi.GetDriverInfo(DismApi.OpenOfflineSession(DismApi.DISM_ONLINE_IMAGE), InfPath);
+            foreach (DismDriver ITEM in DRVINFO)
             {
                 DATA.Add(new Driver()
                 {
@@ -56,7 +54,7 @@ namespace TXQ.Utils.WinAPI
         {
             Driver driver = new Driver();
             string str = TXQ.Utils.Tool.CMD.RunCMDGetStdout($"DISM /ONLINE /GET-DRIVERINFO /DRIVER:\"{InfPath}\" /ENGLISH");
-            foreach (var item in str.Split('\n'))
+            foreach (string item in str.Split('\n'))
             {
 
 

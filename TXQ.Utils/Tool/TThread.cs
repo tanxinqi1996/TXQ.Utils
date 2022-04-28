@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TXQ.Utils.Tool;
 
 namespace TXQ.Utils.Tool
 {
@@ -16,7 +15,7 @@ namespace TXQ.Utils.Tool
         /// <param name="func">运行内容 调用窗体需要使用invoke</param>
         public static void RunEx(Form form, Action action, Action CllBack = null)
         {
-            var LoadingForm = new TXQ.Utils.Interior.Loading
+            Interior.Loading LoadingForm = new TXQ.Utils.Interior.Loading
             {
                 StartPosition = FormStartPosition.CenterParent,
             };
@@ -38,7 +37,7 @@ namespace TXQ.Utils.Tool
                 }
                 catch (Exception ex)
                 {
-                    LOG.ERROR(form.Text +ex.Message);
+                    LOG.ERROR(form.Text + ex.Message);
                     throw;
                 }
                 finally

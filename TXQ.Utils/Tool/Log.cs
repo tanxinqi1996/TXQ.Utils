@@ -113,12 +113,12 @@ namespace TXQ.Utils.Tool
                 }
                 //LogRichTextBox.BeginInvoke(new EventHandler(delegate
                 //{
-                    LogRichTextBox.AppendColorText(Content, color);
+                LogRichTextBox.AppendColorText(Content, color);
 
-                    //if (LogRichTextBox.Lines.Length > 1000)
-                    //{
-                    //    LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
-                    //}
+                //if (LogRichTextBox.Lines.Length > 1000)
+                //{
+                //    LogRichTextBox.Text.Remove(0, LogRichTextBox.Lines[0].Length);
+                //}
                 //}));
 
 

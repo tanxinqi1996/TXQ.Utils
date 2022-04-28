@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using TXQ.Utils.Tool;
 
 namespace TXQ.Utils.Tool
 {
@@ -55,7 +53,7 @@ namespace TXQ.Utils.Tool
         public static List<ManagementObject> SearchWMI(string SELECTSTR, string NAMESPACE = "root\\CIMV2")
         {
             List<ManagementObject> List = new List<ManagementObject>();
-            var DATA = new ManagementObjectSearcher(NAMESPACE, SELECTSTR).Get();
+            ManagementObjectCollection DATA = new ManagementObjectSearcher(NAMESPACE, SELECTSTR).Get();
             foreach (ManagementObject queryObj in DATA)
             {
                 List.Add(queryObj);
@@ -66,11 +64,11 @@ namespace TXQ.Utils.Tool
         {
             List<string> infos = new List<string>();
             //读取系统目录32位注册表
-            var REG = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", false);
-            foreach (var ITEM in REG.GetSubKeyNames())
+            RegistryKey REG = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", false);
+            foreach (string ITEM in REG.GetSubKeyNames())
             {
-                var DATA = REG.OpenSubKey(ITEM, false);
-                var VALUES = DATA.GetValueNames().ToList();
+                RegistryKey DATA = REG.OpenSubKey(ITEM, false);
+                List<string> VALUES = DATA.GetValueNames().ToList();
                 //此项决定是否在系统中显示此软件
                 if (VALUES.Contains("SystemComponent"))
                 {
@@ -86,10 +84,10 @@ namespace TXQ.Utils.Tool
             }
             //读取系统目录64位注册表
             REG = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
-            foreach (var ITEM in REG.GetSubKeyNames())
+            foreach (string ITEM in REG.GetSubKeyNames())
             {
-                var DATA = REG.OpenSubKey(ITEM, false);
-                var VALUES = DATA.GetValueNames().ToList();
+                RegistryKey DATA = REG.OpenSubKey(ITEM, false);
+                List<string> VALUES = DATA.GetValueNames().ToList();
                 //此项决定是否在系统中显示此软件
                 if (VALUES.Contains("SystemComponent"))
                 {
@@ -105,10 +103,10 @@ namespace TXQ.Utils.Tool
             }
             //读取用户目录32位注册表
             REG = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
-            foreach (var ITEM in REG.GetSubKeyNames())
+            foreach (string ITEM in REG.GetSubKeyNames())
             {
-                var DATA = REG.OpenSubKey(ITEM, false);
-                var VALUES = DATA.GetValueNames().ToList();
+                RegistryKey DATA = REG.OpenSubKey(ITEM, false);
+                List<string> VALUES = DATA.GetValueNames().ToList();
                 //此项决定是否在系统中显示此软件
                 if (VALUES.Contains("SystemComponent"))
                 {

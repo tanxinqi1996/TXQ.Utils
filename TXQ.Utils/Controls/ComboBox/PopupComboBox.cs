@@ -141,10 +141,7 @@ namespace TXQ.Utils.Controls
         /// <summary>This property is not relevant for this class.</summary>
         /// <returns>This property is not relevant for this class.</returns>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
-        public new ObjectCollection Items
-        {
-            get { return base.Items; }
-        }
+        public new ObjectCollection Items => base.Items;
 
         /// <summary>This property is not relevant for this class.</summary>
         /// <returns>This property is not relevant for this class.</returns>

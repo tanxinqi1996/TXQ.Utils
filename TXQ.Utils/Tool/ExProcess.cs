@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -15,7 +11,7 @@ namespace TXQ.Utils.Tool
         /// <param name="FileName">程序</param>
         /// <param name="Arguments">参数</param>
         /// <returns>程序运行的标准输出,退出值</returns>
-        public static (string StandardOutput, int ExitCode) Run(string FileName, String Arguments = null)
+        public static (string StandardOutput, int ExitCode) Run(string FileName, string Arguments = null)
         {
             Process proc = new Process();
             proc.StartInfo.CreateNoWindow = true;

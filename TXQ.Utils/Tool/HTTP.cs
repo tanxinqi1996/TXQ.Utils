@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace TXQ.Utils.Tool
             if (header != null)
             {
                 client.DefaultRequestHeaders.Clear();
-                foreach (var item in header)
+                foreach (KeyValuePair<string, string> item in header)
                 {
                     client.DefaultRequestHeaders.Add(item.Key, item.Value);
                 }
@@ -43,7 +42,7 @@ namespace TXQ.Utils.Tool
             if (header != null)
             {
                 client.DefaultRequestHeaders.Clear();
-                foreach (var item in header)
+                foreach (KeyValuePair<string, string> item in header)
                 {
                     client.DefaultRequestHeaders.Add(item.Key, item.Value);
                 }

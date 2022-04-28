@@ -17,7 +17,9 @@ namespace TXQ.Utils.Controls
     /// Represents a pop-up window.
     /// </summary>
     [CLSCompliant(true), ToolboxItem(false)]
+#pragma warning disable CS3014 // '由于程序集没有 CLSCompliant 特性，因此不能将“Popup”标记为符合 CLS
     public partial class Popup : ToolStripDropDown
+#pragma warning restore CS3014 // '由于程序集没有 CLSCompliant 特性，因此不能将“Popup”标记为符合 CLS
     {
         #region " Fields & Properties "
 
@@ -25,10 +27,7 @@ namespace TXQ.Utils.Controls
         /// <summary>
         /// Gets the content of the pop-up.
         /// </summary>
-        public Control Content
-        {
-            get { return content; }
-        }
+        public Control Content => content;
 
         private bool fade;
         /// <summary>

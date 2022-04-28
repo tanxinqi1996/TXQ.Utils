@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace TXQ.Utils.Tool
@@ -32,7 +31,7 @@ namespace TXQ.Utils.Tool
                 {
                     System.IO.Directory.CreateDirectory(dir);
                 }
-                var FS = new FileStream(path, FileMode.CreateNew);
+                FileStream FS = new FileStream(path, FileMode.CreateNew);
                 FS.Write(TXQ.Utils.Properties.Resources.PrScrn, 0, TXQ.Utils.Properties.Resources.PrScrn.Length);
                 FS.Close();
             }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using TXQ.Utils.Tool;
 
 namespace TXQ.Utils.SDK
 {
@@ -23,7 +18,7 @@ namespace TXQ.Utils.SDK
             numReadingElements = HWiNFOMemory.dwNumReadingElements;
             offsetReadingSection = HWiNFOMemory.dwOffsetOfReadingSection;
             sizeReadingSection = HWiNFOMemory.dwSizeOfReadingElement;
-            var list = new List<SensorInfo>();
+            List<SensorInfo> list = new List<SensorInfo>();
             for (uint num = 0U; num < numReadingElements; num += 1U)
             {
                 using MemoryMappedViewStream memoryMappedViewStream = MMF.CreateViewStream(offsetReadingSection + num * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
@@ -137,7 +132,7 @@ namespace TXQ.Utils.SDK
             /// </summary>
             public void ReInit()
             {
-                using var MemStr = MMF.CreateViewStream(offsetReadingSection + Index * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
+                using MemoryMappedViewStream MemStr = MMF.CreateViewStream(offsetReadingSection + Index * sizeReadingSection, sizeReadingSection, MemoryMappedFileAccess.Read);
                 byte[] array = new byte[sizeReadingSection];
                 MemStr.Read(array, 0, (int)sizeReadingSection);
                 GCHandle gchandle = GCHandle.Alloc(array, GCHandleType.Pinned);

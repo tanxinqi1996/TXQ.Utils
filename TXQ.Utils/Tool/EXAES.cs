@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -21,8 +18,12 @@ namespace TXQ.Utils.Tool
             {
                 key = key.EXStrToMD5();
             }
-            if (string.IsNullOrEmpty(str)) return null;
-            Byte[] toEncryptArray = Encoding.UTF8.GetBytes(str);
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
+            byte[] toEncryptArray = Encoding.UTF8.GetBytes(str);
 
             RijndaelManaged rm = new RijndaelManaged
             {
@@ -32,7 +33,7 @@ namespace TXQ.Utils.Tool
             };
 
             ICryptoTransform cTransform = rm.CreateEncryptor();
-            Byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
 
             return Convert.ToBase64String(resultArray, 0, resultArray.Length);
         }
@@ -48,8 +49,12 @@ namespace TXQ.Utils.Tool
             {
                 key = key.EXStrToMD5();
             }
-            if (string.IsNullOrEmpty(str)) return null;
-            Byte[] toEncryptArray = Convert.FromBase64String(str);
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
+            byte[] toEncryptArray = Convert.FromBase64String(str);
 
             RijndaelManaged rm = new RijndaelManaged
             {
@@ -59,7 +64,7 @@ namespace TXQ.Utils.Tool
             };
 
             ICryptoTransform cTransform = rm.CreateDecryptor();
-            Byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
 
             return Encoding.UTF8.GetString(resultArray);
         }

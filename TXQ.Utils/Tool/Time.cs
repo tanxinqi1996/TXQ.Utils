@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -32,7 +28,7 @@ namespace TXQ.Utils.Tool
         /// <returns></returns>
         public static bool SetSystemTime(DateTime dt)
         {
-            var st = new TXQ.Utils.Model.Time()
+            Model.Time st = new TXQ.Utils.Model.Time()
             {
                 year = (short)dt.Year,
                 month = (short)dt.Month,

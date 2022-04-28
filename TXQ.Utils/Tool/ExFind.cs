@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TXQ.Utils.Tool
 {
@@ -11,7 +7,7 @@ namespace TXQ.Utils.Tool
     {
         public static DirectoryInfo FindDir(string Dir)
         {
-            foreach (var ITEM in DriveInfo.GetDrives())
+            foreach (DriveInfo ITEM in DriveInfo.GetDrives())
             {
                 string path = $"{ITEM}\\{Dir}";
                 if (Directory.Exists(path))
@@ -25,7 +21,7 @@ namespace TXQ.Utils.Tool
 
         public static FileInfo FindFile(string Path)
         {
-            foreach (var ITEM in DriveInfo.GetDrives())
+            foreach (DriveInfo ITEM in DriveInfo.GetDrives())
             {
                 string path = $"{ITEM}\\{Path}";
                 if (Directory.Exists(path))

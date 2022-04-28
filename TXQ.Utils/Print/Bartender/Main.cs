@@ -1,9 +1,5 @@
 ﻿using Seagull.BarTender.Print;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TXQ.Utils.Tool;
 
 namespace TXQ.Utils.Print.Bartender
