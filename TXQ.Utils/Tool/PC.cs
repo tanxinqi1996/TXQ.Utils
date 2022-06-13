@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using TXQ.Utils.Tool;
+
 
 namespace TXQ.Utils.Tool
 {
@@ -79,10 +81,36 @@ namespace TXQ.Utils.Tool
                 }
                 if (VALUES.Contains("DisplayName"))
                 {
-                    infos.Add(DATA.GetValue("DisplayName").ToString());
+                    string SOFT = $"名称:{ DATA.GetValue("DisplayName") }";
+                    if (VALUES.Contains("Publisher"))
+                    {
+                        string Publisher = DATA.GetValue("Publisher").ToString();
+                        SOFT += $";发布者:{Publisher}";
+                    }
+                    if (VALUES.Contains("DisplayVersion"))
+                    {
+                        string VERSION = DATA.GetValue("DisplayVersion").ToString();
+                        SOFT += $";版本号:{VERSION}";
+                    }
+                    try
+                    {
+                        if (VALUES.Contains("InstallDate"))
+                        {
+                            string date = DATA.GetValue("InstallDate").ToString();
+                            if (date.EXIsNullOrEmptyOrWhiteSpace() == false)
+                            {
+                                SOFT += $";安装时间:{date}";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LOG.ERROR($"{SOFT}安装时间读取错误，注册表不存在指定的键值，{ex.Message}");
+                    }
+                    infos.Add(SOFT);
                 }
             }
-            //读取系统目录64位注册表
+            //读取系统目录
             REG = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
             foreach (string ITEM in REG.GetSubKeyNames())
             {
@@ -98,10 +126,37 @@ namespace TXQ.Utils.Tool
                 }
                 if (VALUES.Contains("DisplayName"))
                 {
-                    infos.Add(DATA.GetValue("DisplayName").ToString());
+                    string SOFT = $"名称:{DATA.GetValue("DisplayName")}";
+                    if (VALUES.Contains("Publisher"))
+                    {
+                        string Publisher = DATA.GetValue("Publisher").ToString();
+                        SOFT += $";发布者:{Publisher}";
+                    }
+                    if (VALUES.Contains("DisplayVersion"))
+                    {
+                        string VERSION = DATA.GetValue("DisplayVersion").ToString();
+                        SOFT += $";版本号:{VERSION}";
+                    }
+                    try
+                    {
+                        if (VALUES.Contains("InstallDate"))
+                        {
+                            string date = DATA.GetValue("InstallDate").ToString();
+                            if (date.EXIsNullOrEmptyOrWhiteSpace() == false)
+                            {
+                                SOFT += $";安装时间:{date}";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LOG.ERROR($"{SOFT}安装时间读取错误，注册表不存在指定的键值，{ex.Message}");
+                    }
+                    infos.Add(SOFT);
                 }
+
             }
-            //读取用户目录32位注册表
+            //读取用户目录
             REG = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
             foreach (string ITEM in REG.GetSubKeyNames())
             {
@@ -117,8 +172,35 @@ namespace TXQ.Utils.Tool
                 }
                 if (VALUES.Contains("DisplayName"))
                 {
-                    infos.Add(DATA.GetValue("DisplayName").ToString());
+                    string SOFT = $"名称:{DATA.GetValue("DisplayName")}";
+                    if (VALUES.Contains("Publisher"))
+                    {
+                        string Publisher = DATA.GetValue("Publisher").ToString();
+                        SOFT += $";发布者:{Publisher}";
+                    }
+                    if (VALUES.Contains("DisplayVersion"))
+                    {
+                        string VERSION = DATA.GetValue("DisplayVersion").ToString();
+                        SOFT += $";版本号:{VERSION}";
+                    }
+                    try
+                    {
+                        if (VALUES.Contains("InstallDate"))
+                        {
+                            string date = DATA.GetValue("InstallDate").ToString();
+                            if (date.EXIsNullOrEmptyOrWhiteSpace() == false)
+                            {
+                                SOFT += $";安装时间:{date}";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LOG.ERROR($"{SOFT}安装时间读取错误，注册表不存在指定的键值，{ex.Message}");
+                    }
+                    infos.Add(SOFT);
                 }
+
             }
 
             return infos;
