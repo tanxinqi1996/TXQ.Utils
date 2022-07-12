@@ -13,12 +13,11 @@ namespace TXQ.Utils.Tool
         static CMD()
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            DefaultEncoding = Encoding.GetEncoding("GB2312");
         }
         /// <summary>
         /// 编码类型;默认为GB2312;请勿修改此选项
         /// </summary>
-        private static Encoding DefaultEncoding;
+        public static readonly Encoding DefaultEncoding = Encoding.GetEncoding("GB2312");
 
 
         /// <summary>
@@ -49,75 +48,6 @@ namespace TXQ.Utils.Tool
             }
         }
 
-        /// <summary>
-        /// 把CMD命令写入BAT文件并执行;并获取返回值
-        /// </summary>
-        /// <param name="Cmd">命令</param>
-        /// <returns>返回值;0=成功</returns>
-        public static int Run(string Cmd)
-        {
-            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using StreamWriter sw = new StreamWriter(tempfile, false, DefaultEncoding);
-            sw.Write(Cmd);
-            sw.Close();
-
-            using Process p = new Process();
-            p.StartInfo.FileName = tempfile;
-            p.StartInfo.UseShellExecute = false;
-            p.Start();
-            p.WaitForExit();
-            File.Delete(tempfile);
-            return p.ExitCode;
-        }
-
-        /// <summary>
-        /// 运行命令
-        /// </summary>
-        /// <param name="Cmd">要运行的命令</param>
-        /// <param name="outputHandler">异步输出的委托</param>
-        /// <param name="errorHandler">异步错误的委托</param>
-        /// <returns></returns>
-        public static int Run(string Cmd, DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
-        {
-            string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using StreamWriter sw = new StreamWriter(tempfile, false, DefaultEncoding);
-            sw.Write(Cmd);
-            sw.Close();
-
-            Process cmdProcess = new Process();
-
-            cmdProcess.StartInfo.FileName = tempfile;
-            //若要使用异步输出则必须不使用操作系统外壳
-            cmdProcess.StartInfo.UseShellExecute = false;
-            //打开输出重定向
-            cmdProcess.StartInfo.RedirectStandardOutput = true;
-            //打开错误重定向
-            cmdProcess.StartInfo.RedirectStandardError = true;
-            //若要使用异步输出则必须不创建新窗口
-            cmdProcess.StartInfo.CreateNoWindow = true;
-            //指定异步输出使用的编码方式
-            cmdProcess.StartInfo.StandardOutputEncoding = DefaultEncoding;
-            //指定异步错误使用的编码方式
-            cmdProcess.StartInfo.StandardErrorEncoding = DefaultEncoding;
-            //将输出处理函数重定向到输出处理委托
-            cmdProcess.OutputDataReceived += outputHandler;
-            //将错误处理函数重定向到错误处理委托
-            cmdProcess.ErrorDataReceived += errorHandler;
-            //启动控制台进程
-            cmdProcess.Start();
-            //开始异步读取输出流
-            cmdProcess.BeginOutputReadLine();
-            //开始异步读取错误流
-            cmdProcess.BeginErrorReadLine();
-            //等待进程退出
-            cmdProcess.WaitForExit();
-            int ExitCode = cmdProcess.ExitCode;
-            //结束异步读取错误流
-            cmdProcess.CancelErrorRead();
-            //结束异步读取输出流
-            cmdProcess.CancelOutputRead();
-            return ExitCode;
-        }
 
 
         /// <summary>
@@ -183,9 +113,17 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="CMD">CMD命令</param>
         /// <param name="SHOWERR">最后一个命令ErrorLevel!=0&&SHOWERR==True时，不自动关闭命令窗口</param>
-        public static void RunCmdInForm(string CMD, bool SHOWERR = false)
+        public static int RunCmdInForm(string CMD, bool SHOWERR = false)
         {
-            new TXQ.Utils.Interior.RunCommandForm(CMD, SHOWERR).ShowDialog();
+            var form = new TXQ.Utils.Interior.RunCommandForm(CMD, SHOWERR);
+            if (form.ShowDialog() == System.Windows.Forms.DialogResult.Yes)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
         }
 
         /// <summary>
@@ -193,25 +131,23 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="Cmd">CMD命令</param>
         /// <returns>输出</returns>
-        public static string RunCMDGetStdout(string Cmd)
+        public static (int ExitCode, string Output) RunCMD(string Cmd,string Args=null)
         {
             string tempfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".BAT";
-            using StreamWriter sw = new StreamWriter(tempfile, false, DefaultEncoding);
-            sw.Write(Cmd);
-            sw.Close();
-
-
-            using Process proc = new Process();
+            File.WriteAllText(tempfile, Cmd,DefaultEncoding);
+            using Process proc = new();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.FileName = tempfile;
+            proc.StartInfo.Arguments = Args;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.Start();
             string outStr = proc.StandardOutput.ReadToEnd();
+            int exitcode = proc.ExitCode;
             proc.Close();
-            return outStr;
+            return (exitcode, outStr);
 
         }
 
@@ -220,11 +156,8 @@ namespace TXQ.Utils.Tool
         /// </summary>
         /// <param name="Cmd">CMD命令</param>
         /// <returns>输出</returns>
-        public static string RunExeGetStdout(string exe, string args)
+        public static (int ExitCode, string Output) RunExe(string exe, string args=null)
         {
-
-
-
             using Process proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.FileName = exe;
@@ -235,10 +168,14 @@ namespace TXQ.Utils.Tool
             proc.StartInfo.RedirectStandardOutput = true;
             proc.Start();
             string outStr = proc.StandardOutput.ReadToEnd();
+            int exitcode = proc.ExitCode;
             proc.Close();
-            return outStr;
+            return (exitcode, outStr);
 
         }
+
+
+
         /// <summary>
         /// 调用C System函数，在控制台中执行cli命令。
         /// </summary>
@@ -249,7 +186,7 @@ namespace TXQ.Utils.Tool
         }
 
         [DllImport("msvcrt.dll", SetLastError = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        private static extern void system(string command); // longjmp
+        private static extern void system(string command);
 
     }
 }

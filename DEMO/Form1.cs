@@ -25,6 +25,7 @@ namespace DEMO
 
         protected override void OnShown(EventArgs e)
         {
+            LOG.INFO(CMD.RunCmdInForm("ping baidu.com ",true).ToString());
             base.OnShown(e);
         }
     }

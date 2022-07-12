@@ -53,7 +53,7 @@ namespace TXQ.Utils.WinAPI
         public static void GetDriverInfoDism(string InfPath)
         {
             Driver driver = new Driver();
-            string str = TXQ.Utils.Tool.CMD.RunCMDGetStdout($"DISM /ONLINE /GET-DRIVERINFO /DRIVER:\"{InfPath}\" /ENGLISH");
+            (int exit,string str) = TXQ.Utils.Tool.CMD.RunCMD($"DISM /ONLINE /GET-DRIVERINFO /DRIVER:\"{InfPath}\" /ENGLISH");
             foreach (string item in str.Split('\n'))
             {
 

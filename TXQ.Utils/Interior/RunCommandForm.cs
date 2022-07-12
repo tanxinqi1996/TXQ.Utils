@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,30 +16,89 @@ namespace TXQ.Utils.Interior
         /// 
         /// </summary>
         /// <param name="CMD">CMD命令</param>
-        /// <param name="SHOWERR">运行报错后是否显示在窗体上。为否是自动关闭窗口，不显示错误</param>
-        public RunCommandForm(string CMD, bool SHOWERR)
+        /// <param name="WaitOnError">CMD命令返回!=0时,等待用户操作,不自动退出</param>
+        public RunCommandForm(string CMD, bool WaitOnError = true)
         {
             InitializeComponent();
             ControlBox = false;
             Text = "正在执行命令...";
-            command = CMD;
-            showerr = SHOWERR;
+
+            showerr = WaitOnError;
+            Task.Run(() =>
+            {
+                try
+                {
+                    string tempfile =$"{Path.GetTempPath()}{Guid.NewGuid()}.BAT";
+                    //using StreamWriter sw = new StreamWriter(tempfile, false, TXQ.Utils.Tool.CMD.DefaultEncoding);
+                    //sw.Write(CMD);
+                    //sw.Close();
+                    File.WriteAllText(tempfile,CMD, TXQ.Utils.Tool.CMD.DefaultEncoding);
+                    cmdProcess = new Process();
+                    cmdProcess.StartInfo.FileName = tempfile;
+                    cmdProcess.StartInfo.UseShellExecute = false;
+                    cmdProcess.StartInfo.RedirectStandardOutput = true;
+                    cmdProcess.StartInfo.RedirectStandardError = true;
+                    cmdProcess.StartInfo.CreateNoWindow = true;
+                    cmdProcess.StartInfo.StandardOutputEncoding = TXQ.Utils.Tool.CMD.DefaultEncoding;
+                    cmdProcess.StartInfo.StandardErrorEncoding = TXQ.Utils.Tool.CMD.DefaultEncoding;
+                    cmdProcess.OutputDataReceived += new DataReceivedEventHandler(Output);
+                    cmdProcess.ErrorDataReceived += new DataReceivedEventHandler(Error);
+                    cmdProcess.Start();
+                    cmdProcess.BeginOutputReadLine();
+                    cmdProcess.BeginErrorReadLine();
+                    cmdProcess.WaitForExit();
+                    cmdProcess.CancelErrorRead();
+                    cmdProcess.CancelOutputRead();
+                    ExitCode = cmdProcess.ExitCode;
+                    File.Delete(tempfile);
+                    if (ExitCode == 0)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            DialogResult = DialogResult.OK;
+                            Close();
+                        }));
+                    }
+                    else
+                    {
+                        if (showerr)
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                ControlBox = true;
+                            }));
+                        }
+                        else
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                Close();
+                            }));
+                        }
+                    }
+                }
+                catch (Exception EX)
+                {
+                    TXQ.Utils.Tool.LOG.ERROR($"CMD命令运行异常:{EX.Message}");
+                }
+
+            });
         }
-        private readonly string command;
         //运行完成退出代码 默认-2 窗口异常关闭
-        private int exitcode = -2;
+        private int ExitCode = -2;
         //运行错误是否显示错误
         private readonly bool showerr = true;
 
-        protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e);
-            RunCmd(command);
-        }
+        private static Process cmdProcess;
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            if (exitcode == 0)
+            if (cmdProcess.HasExited == false)
+            {
+                cmdProcess.Close();
+            }
+            if (ExitCode == 0)
             {
                 DialogResult = DialogResult.Yes;
             }
@@ -46,44 +108,8 @@ namespace TXQ.Utils.Interior
             }
         }
 
-        public void RunCmd(string CMD)
-        {
-            DataReceivedEventHandler OUTPUT = new DataReceivedEventHandler(Output);
-            DataReceivedEventHandler ERRPUT = new DataReceivedEventHandler(Error);
 
-            Task.Run(new Action(() =>
-            {
-                exitcode = TXQ.Utils.Tool.CMD.Run(CMD, OUTPUT, ERRPUT);
-                if (exitcode == 0)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        DialogResult = DialogResult.OK;
-                        Close();
-                    }));
-                }
-                else
-                {
-                    if (showerr)
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            ControlBox = true;
-                            LogAppend(Color.Red, "\r\n\r\n命令执行失败");
-                        }));
-                    }
-                    else
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            Close();
-                        }));
-                    }
 
-                }
-            }));
-
-        }
 
 
         private void Output(object sender, DataReceivedEventArgs e)
@@ -93,7 +119,6 @@ namespace TXQ.Utils.Interior
                 LogAppend(Color.Black, e.Data);
                 TXQ.Utils.Tool.LOG.INFO(e.Data);
             }
-
         }
 
         private void Error(object sender, DataReceivedEventArgs e)
@@ -101,24 +126,24 @@ namespace TXQ.Utils.Interior
             if (e.Data != null)
             {
                 LogAppend(Color.Red, e.Data);
-                TXQ.Utils.Tool.LOG.INFO(e.Data);
-
+                TXQ.Utils.Tool.LOG.ERROR(e.Data);
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void LogAppend(Color color, string text)
         {
-
-            Invoke(new Action(() =>
+            if (this.IsHandleCreated)
             {
-                richTextBox1.AppendText("\r\n");
-                richTextBox1.SelectionColor = color;
-                richTextBox1.AppendText(text);
-                richTextBox1.Select(richTextBox1.TextLength, 0);
-                richTextBox1.ScrollToCaret();
-            }));
-
+                Invoke(new Action(() =>
+                {
+                    richTextBox1.AppendText("\r\n");
+                    richTextBox1.SelectionColor = color;
+                    richTextBox1.AppendText(text);
+                    richTextBox1.Select(richTextBox1.TextLength, 0);
+                    richTextBox1.ScrollToCaret();
+                }));
+            }
         }
 
     }

@@ -10,7 +10,6 @@ namespace TXQ.Utils.Tool
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlData);
-
             XmlElement element = xmlDoc.DocumentElement;
 
             T objModel = System.Activator.CreateInstance<T>();
