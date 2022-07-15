@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TXQ.Utils.Tool;
 
 namespace TXQ.Utils.WinAPI
 {
@@ -28,7 +29,7 @@ namespace TXQ.Utils.WinAPI
             List<string> list = new List<string>();
             try
             {
-                (int CODE, string str) = Tool.CMD.RunCMD(Environment.CurrentDirectory + "/Lib/smartctl", "--scan -j");
+                (int CODE, string str) = Tool.CMD.RunExe(Environment.CurrentDirectory + "/Lib/smartctl.exe", "--scan -j");
                 JObject properties = JObject.Parse(str);
                 properties.SelectToken("devices").ToArray();
                 foreach (JToken item in properties.SelectToken("devices").ToArray())
@@ -52,7 +53,7 @@ namespace TXQ.Utils.WinAPI
                 string reading = null;
                 try
                 {
-                    (int CODE, string str) = Tool.CMD.RunCMD(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
+                    (int CODE, string str) = Tool.CMD.RunExe(Environment.CurrentDirectory + "/Lib/smartctl", @$"-a {item} -j");
                     reading = "json";
                     JObject json = JObject.Parse(str);
                     Model.SmartInfo smartInfo = new Model.SmartInfo();
